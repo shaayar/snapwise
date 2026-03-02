@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Snapwise Artistic Full-Screen Menu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f0df2",
+                        "background-light": "#f7f5f8",
+                        "background-dark": "#0a050d",
+                    },
+                    fontFamily: {
+                        "display": ["Newsreader", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .nebula-bg {
+            background: radial-gradient(circle at 50% 50%, rgba(127, 13, 242, 0.15) 0%, rgba(10, 5, 13, 1) 70%);
+        }
+        .grainy-filter {
+            filter: contrast(150%) brightness(100%);
+            mix-blend-mode: overlay;
+            opacity: 0.1;
+        }
+        .floating-orb {
+            filter: blur(80px);
+            background: linear-gradient(135deg, #7f0df2 0%, #362249 100%);
+        }.nav-container:hover .nav-item {
+            opacity: 0.4;
+            transform: scale(0.75);
+        }
+        .nav-container .nav-item:hover {
+            opacity: 1;
+            transform: scale(1.5);
+            z-index: 20;
+        }
+        .nav-item {
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            transform-origin: left center;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display overflow-hidden">
+<div class="relative min-h-screen w-full flex flex-col nebula-bg">
+<header class="flex items-center justify-between px-12 py-8 z-50">
+<div class="flex items-center gap-3 text-slate-900 dark:text-slate-100 group cursor-pointer">
+<div class="w-8 h-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">filter_vintage</span>
+</div>
+<h2 class="text-2xl font-bold tracking-tight">Snapwise</h2>
+</div>
+<button class="group flex items-center justify-center w-12 h-12 rounded-full border border-primary/20 hover:border-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-slate-100 group-hover:text-primary transition-colors">close</span>
+</button>
+</header>
+<main class="flex-1 flex px-12 pb-12 z-10">
+<div class="w-full lg:w-3/5 flex flex-col justify-center">
+<nav class="nav-container flex flex-col gap-8 lg:gap-12">
+<div class="nav-item group relative inline-block w-fit">
+<a class="text-6xl lg:text-8xl font-light italic text-slate-100 hover:text-primary transition-colors duration-500 block" href="#">
+                            Experience
+                        </a>
+<span class="absolute -left-12 top-1/2 -translate-y-1/2 text-xs font-sans uppercase tracking-[0.3em] text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity">01</span>
+</div>
+<div class="nav-item group relative inline-block w-fit">
+<a class="text-6xl lg:text-8xl font-light italic text-slate-100 hover:text-primary transition-colors duration-500 block" href="#">
+                            The Intelligence
+                        </a>
+<span class="absolute -left-12 top-1/2 -translate-y-1/2 text-xs font-sans uppercase tracking-[0.3em] text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity">02</span>
+</div>
+<div class="nav-item group relative inline-block w-fit">
+<a class="text-6xl lg:text-8xl font-light italic text-slate-100 hover:text-primary transition-colors duration-500 block" href="#">
+                            Pricing
+                        </a>
+<span class="absolute -left-12 top-1/2 -translate-y-1/2 text-xs font-sans uppercase tracking-[0.3em] text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity">03</span>
+</div>
+<div class="nav-item group relative inline-block w-fit">
+<a class="text-6xl lg:text-8xl font-light italic text-slate-100 hover:text-primary transition-colors duration-500 block" href="#">
+                            Archivist
+                        </a>
+<span class="absolute -left-12 top-1/2 -translate-y-1/2 text-xs font-sans uppercase tracking-[0.3em] text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity">04</span>
+</div>
+</nav>
+</div>
+<div class="hidden lg:flex w-2/5 relative items-center justify-center">
+<div class="floating-orb absolute w-96 h-96 rounded-full opacity-30 animate-pulse"></div>
+<div class="relative grid grid-cols-2 gap-4 w-64 rotate-12">
+<div class="w-32 h-44 bg-slate-100/10 backdrop-blur-md rounded-lg border border-white/5 flex items-center justify-center transform translate-y-4 hover:-translate-y-2 transition-transform duration-500">
+<span class="material-symbols-outlined text-white/20 text-4xl">image</span>
+</div>
+<div class="w-32 h-32 bg-primary/20 backdrop-blur-md rounded-lg border border-white/5 flex items-center justify-center transform -translate-x-4 hover:translate-x-2 transition-transform duration-700">
+<span class="material-symbols-outlined text-white/20 text-4xl">auto_awesome</span>
+</div>
+<div class="w-40 h-28 bg-white/5 backdrop-blur-md rounded-lg border border-white/5 flex items-center justify-center transform -translate-y-8 hover:translate-y-2 transition-transform duration-1000">
+<span class="material-symbols-outlined text-white/20 text-3xl">dataset</span>
+</div>
+<div class="w-28 h-40 bg-slate-100/10 backdrop-blur-md rounded-lg border border-white/5 flex items-center justify-center transform translate-x-4 translate-y-2 hover:-translate-x-2 transition-transform duration-300">
+<span class="material-symbols-outlined text-white/20 text-4xl">search</span>
+</div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="w-full h-full opacity-5" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQ475kGXDBfESj6edzvtVzcI6iK8IIXzAIQkgs3jf0HYsWVS6k1qUHzjSwRh2-ysMGxyTBb082QXYV2dr0I7UlPHp0-z4AN2UWPQbzuV5Tg07C79vgBPlsBV-1riJ9sM7PTz2tTTo7AoaEnwC4uD2b_CmscQy_LNJj55fFPTMCtnxuE9Smb2pz3i3jbvmQaF-4pnTAWpCHtfD9yEucjhZWgV1xPyhfDHGpjcDlqjYdA5ihjgPkuPA0jE_t4ZAL-MHLicXC12q0mdob');"></div>
+</div>
+</div>
+</main>
+<footer class="px-12 py-8 flex items-end justify-between z-10">
+<div class="flex gap-10 font-sans text-xs uppercase tracking-[0.2em] text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Instagram</a>
+<a class="hover:text-primary transition-colors" href="#">Twitter</a>
+<a class="hover:text-primary transition-colors" href="#">Journal</a>
+</div>
+<div class="hidden sm:block">
+<p class="text-[10px] uppercase tracking-[0.4em] text-slate-600">Snapwise / Digital Museum v2.0</p>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400">hello@snapwise.ai</p>
+</div>
+</footer>
+<div class="fixed inset-0 pointer-events-none grainy-filter z-[100]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBiWjc0GS0rsRF8yc-QGvV05A1s0qvCn83simY1_EsEi6zUia9eY-1dh1eR8o1Sjg3k24RMg6vNSNYOIY9AFyp3MIWdzzf8i3ViMwjpSFdVh1wxAw0oHJmOZxKxM8dlYfSB4o_1YoHCj-TRr60U85HQq6bF0hS7ofnj7HohcDiMFZ1SVcFLq8bLri29jWesO_M7H0k6SjaFq16NlEVbs2IFl--ZzJtsCB7vl6DcIfTuEMX8GBagn7Od2w7NGPOWhRgi2PjBPsissKke');"></div>
+</div>
+
+</body></html>

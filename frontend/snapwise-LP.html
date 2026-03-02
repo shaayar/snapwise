@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="scroll-smooth dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Snapwise — Organize Intelligence</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#A855F7", // Electric Neon Purple
+                        "background-dark": "#000000", // Pitch Black
+                        "card-dark": "#0A0A0A",
+                    },
+                    fontFamily: {
+                        display: ["Instrument Serif", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --neon-purple: #A855F7;
+            --pitch-black: #000000;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--pitch-black);
+        }
+        .serif-text {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;}
+        .mono-text {
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 0.75rem;
+        }
+        .glow-primary {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+        .glow-text {
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+        .scrolly-trigger {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .scrolly-trigger.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-purple);
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-slate-100 selection:bg-primary selection:text-black">
+<nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-black/90 backdrop-blur-xl">
+<div class="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="w-9 h-9 bg-primary flex items-center justify-center transform rotate-45 transition-transform group-hover:rotate-90 glow-primary">
+<span class="material-symbols-outlined text-black text-xl -rotate-45 group-hover:-rotate-90 transition-transform">grid_view</span>
+</div>
+<span class="text-xl font-bold tracking-tighter mono-text text-white">Snapwise</span>
+</div>
+<div class="flex items-center gap-10">
+<button class="text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined font-light">search</span>
+</button>
+<button class="mono-text border border-white/20 px-6 py-2.5 hover:bg-white hover:text-black hover:border-white transition-all text-[11px] font-bold tracking-widest glow-primary">
+                Menu
+            </button>
+</div>
+</div>
+</nav>
+<section class="min-h-screen pt-32 pb-20 px-8 flex flex-col justify-center items-center text-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-primary/5">
+<div class="max-w-5xl scrolly-trigger" id="hero">
+<h1 class="serif-text text-[140px] leading-[1] mb-10 tracking-tight text-white">
+            Organize <br/>
+<span class="text-primary italic glow-text">Intelligence.</span>
+</h1>
+<div class="flex flex-col md:flex-row items-center justify-center gap-12 mt-16 max-w-3xl mx-auto border-t border-white/10 pt-12">
+<p class="text-2xl text-slate-400 font-light leading-relaxed text-center">
+                The high-fidelity editorial layer for your digital memory. <br/>
+<span class="text-white">Transform noise into signal.</span>
+</p>
+</div>
+<button class="mt-16 px-12 py-5 bg-primary text-black font-bold mono-text text-xs tracking-[0.2em] glow-primary hover:scale-105 transition-transform">
+            Request Access
+        </button>
+</div>
+</section>
+<section class="px-8 py-24">
+<div class="max-w-7xl mx-auto relative group overflow-hidden scrolly-trigger border border-white/5">
+<div class="aspect-[21/9] w-full bg-black overflow-hidden">
+<img alt="The Architecture of Information" class="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-[2000ms] grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnC2EnaghEho-m7KNT0JkIMGIGqiel0QKR0YWF3m2JhDNRCTazW58bnyOvB3Gzqn6liVCJBQE98CjoHWs3aG4BGi26ukwR2zJntr_T500bc8Xl_MSH9QvQa5lX_WG1fYqxicD2DS3DrRDQF_hxpJuVTuVR9PxaIx1WYgoSpFkf1WUFPtR3kDUgqkSLo0LccR6yqNZ2eR0wciMQbTpnDNP3Xz1WgWsJ-lmE853xlp1_DZC7YXNsuSduuk1Id5PilTXj6NChZbh2E87m"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+<div class="absolute bottom-16 left-16">
+<span class="mono-text text-primary mb-4 block font-bold">Case Study 01</span>
+<h2 class="serif-text text-6xl md:text-7xl text-white tracking-tight">The Architecture of Information</h2>
+</div>
+</div>
+</section>
+<section class="py-48 px-8">
+<div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-32 items-center">
+<div class="scrolly-trigger">
+<div class="relative">
+<div class="absolute -inset-4 border border-primary/20 -z-10"></div>
+<img alt="Atmospheric capture" class="w-full aspect-[4/5] object-cover grayscale brightness-50 border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4slb0AnGCUCpwwiOcQxhj_Dlkz5GbxuePFtkTLGBXlHY910h1NCsiORfIixPDqYhhptoPkB4_dfnOomFoXmjhcFAbRPxNxS80Q9sO51Fk75LH3l_nqqmvm7O7BZe9jLfSMvTvlaX6n9RBpIaoLtj5HexI01aCs3ShJ8L9C2kV1cDuLr92pkAsgi3rHg0vu0oBvcCc53cLUB8DlbwN71tekKjv1_iuJnCbp3UTxmeBKnHmILQyow8NtJHXWGG5LJJmRtfOvFbfiYko"/>
+</div>
+</div>
+<div class="scrolly-trigger">
+<span class="mono-text text-primary block mb-8 font-bold text-sm tracking-widest">The Context</span>
+<h2 class="serif-text text-6xl md:text-7xl leading-[0.95] mb-10 text-white italic">
+                Your library is a beautiful mess where ideas go to die.
+            </h2>
+<p class="text-2xl text-slate-500 font-light leading-relaxed mb-12">
+                Screenshots are high-intent captures. Yet, they remain static pixels, buried under a mountain of daily clutter. Snapwise extracts the meaning from the void.
+            </p>
+<div class="w-24 h-[1px] bg-primary glow-primary"></div>
+</div>
+</div>
+</section>
+<section class="py-48 bg-card-dark/50 border-y border-white/5">
+<div class="max-w-7xl mx-auto px-8">
+<span class="mono-text text-primary block mb-8 scrolly-trigger font-bold">System Process</span>
+<h2 class="serif-text text-7xl mb-24 scrolly-trigger text-white">The Intelligence.</h2>
+<div class="grid md:grid-cols-2 gap-12">
+<div class="bg-black p-16 border border-white/5 hover:border-primary/50 transition-all group scrolly-trigger relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl">screenshot</span>
+</div>
+<div class="w-14 h-14 border border-primary/40 flex items-center justify-center mb-12 group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">screenshot</span>
+</div>
+<h3 class="text-3xl font-medium mb-6 text-white tracking-tight">Capture</h3>
+<p class="text-slate-500 text-lg leading-relaxed max-w-xs">
+                    Snap anything. A recipe, a dress, a flight detail, or a quote. We handle the heavy lifting of sorting instantly.
+                </p>
+<div class="mt-16 h-[2px] w-0 bg-primary glow-primary group-hover:w-full transition-all duration-700"></div>
+</div>
+<div class="bg-black p-16 border border-white/5 hover:border-primary/50 transition-all group scrolly-trigger relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl">auto_fix_high</span>
+</div>
+<div class="w-14 h-14 border border-primary/40 flex items-center justify-center mb-12 group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">auto_fix_high</span>
+</div>
+<h3 class="text-3xl font-medium mb-6 text-white tracking-tight">Extraction</h3>
+<p class="text-slate-500 text-lg leading-relaxed max-w-xs">
+                    Pixel-perfect OCR and AI parsing extract names, dates, and links, turning flat images into dynamic records.
+                </p>
+<div class="mt-16 h-[2px] w-0 bg-primary glow-primary group-hover:w-full transition-all duration-700"></div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-48 px-8 bg-black">
+<div class="max-w-3xl mx-auto text-center mb-32 scrolly-trigger">
+<span class="mono-text text-primary block mb-8 font-bold">The Synthesis</span>
+<h2 class="serif-text text-7xl text-white">Structured Output.</h2>
+</div>
+<div class="max-w-5xl mx-auto space-y-4">
+<div class="scrolly-trigger group bg-card-dark p-10 border border-white/5 hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer flex items-center justify-between">
+<div class="flex items-center gap-10">
+<div class="w-16 h-16 bg-white/5 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">shopping_bag</span>
+</div>
+<div>
+<h4 class="mono-text text-base mb-2 text-white">Buy Later</h4>
+<p class="text-slate-500 text-sm font-medium italic">12 items curated with intent</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="mono-text text-[10px] text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">View Details</span>
+<span class="material-symbols-outlined text-slate-700 group-hover:text-primary group-hover:translate-x-2 transition-all">arrow_forward</span>
+</div>
+</div>
+<div class="scrolly-trigger group bg-card-dark p-10 border border-white/5 hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer flex items-center justify-between">
+<div class="flex items-center gap-10">
+<div class="w-16 h-16 bg-white/5 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">live_tv</span>
+</div>
+<div>
+<h4 class="mono-text text-base mb-2 text-white">Watch List</h4>
+<p class="text-slate-500 text-sm font-medium italic">5 Series pending analysis</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="mono-text text-[10px] text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">View Details</span>
+<span class="material-symbols-outlined text-slate-700 group-hover:text-primary group-hover:translate-x-2 transition-all">arrow_forward</span>
+</div>
+</div>
+<div class="scrolly-trigger group bg-card-dark p-10 border border-white/5 hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer flex items-center justify-between">
+<div class="flex items-center gap-10">
+<div class="w-16 h-16 bg-white/5 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">map</span>
+</div>
+<div>
+<h4 class="mono-text text-base mb-2 text-white">Itinerary</h4>
+<p class="text-slate-500 text-sm font-medium italic">Paris • November 2024</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="mono-text text-[10px] text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">View Details</span>
+<span class="material-symbols-outlined text-slate-700 group-hover:text-primary group-hover:translate-x-2 transition-all">arrow_forward</span>
+</div>
+</div>
+</div>
+</section>
+<section class="py-60 px-8 text-center bg-background-dark overflow-hidden relative">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="max-w-3xl mx-auto scrolly-trigger relative z-10">
+<div class="w-px h-24 bg-primary mx-auto mb-20 glow-primary"></div>
+<h2 class="serif-text text-7xl md:text-8xl mb-10 text-white leading-tight">On-Device <br/>Privacy.</h2>
+<p class="text-2xl text-slate-400 font-light leading-relaxed mb-16">
+            We don't want your data. All AI processing happens locally on your hardware. Zero cloud latency. Zero tracking. One hundred percent yours.
+        </p>
+<div class="inline-flex items-center gap-4 bg-white text-black px-10 py-5 rounded-none font-bold glow-primary hover:scale-105 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-xl">encrypted</span>
+<span class="mono-text text-xs tracking-[0.25em]">100% Encrypted</span>
+</div>
+</div>
+</section>
+<footer class="bg-black py-32 px-8 border-t border-white/5">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between gap-24 mb-32">
+<div class="max-w-sm">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-8 h-8 bg-primary flex items-center justify-center transform rotate-45 glow-primary">
+<span class="material-symbols-outlined text-black text-[14px] -rotate-45">grid_view</span>
+</div>
+<span class="mono-text text-lg font-bold text-white tracking-tighter">Snapwise</span>
+</div>
+<p class="text-slate-600 text-xs font-bold leading-loose uppercase tracking-[0.1em]">
+                    The Editorial screenshot intelligence <br/>platform for the highly intentional curator.
+                </p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-24">
+<div class="space-y-8">
+<h5 class="mono-text text-primary font-bold">Explore</h5>
+<ul class="space-y-5 text-slate-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="#">About</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Manifesto</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Intelligence</a></li>
+</ul>
+</div>
+<div class="space-y-8">
+<h5 class="mono-text text-primary font-bold">Legal</h5>
+<ul class="space-y-5 text-slate-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="#">Privacy</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Terms</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+<div class="space-y-8 hidden md:block">
+<h5 class="mono-text text-primary font-bold">Social</h5>
+<ul class="space-y-5 text-slate-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="#">X / Twitter</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Instagram</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="pt-16 border-t border-white/5 flex flex-col md:flex-row justify-between gap-8">
+<p class="mono-text text-[9px] text-slate-700 tracking-[0.3em]">
+                © 2024 SNAPWISE EDITORIAL / SYSTEM REV.04
+            </p>
+<p class="mono-text text-[9px] text-slate-700 tracking-[0.3em]">
+                HIGH-CONTRAST DARK VARIANT
+            </p>
+</div>
+</div>
+</footer>
+<script>
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    document.querySelectorAll('.scrolly-trigger').forEach(el => observer.observe(el));
+</script>
+
+</body></html>
