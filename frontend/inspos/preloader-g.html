@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Snapwise — Preloader G: The Void Opens</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Jost:wght@200;300;400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#04020A;
+  --primary:#7F0DF2;
+  --primary-g:rgba(127,13,242,0.12);
+  --border:rgba(127,13,242,0.2);
+  --border-s:rgba(255,255,255,0.05);
+  --text:#EDE8F5;
+  --muted:#7A6E8A;
+  --dim:#2A2235;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Jost',sans-serif;color:var(--text);}
+
+/* ── PRELOADER ── */
+#preloader{
+  position:fixed;inset:0;z-index:1000;
+  pointer-events:none;
+}
+
+/* Top half — covers upper viewport */
+#void-top{
+  position:absolute;
+  top:0;left:0;right:0;
+  height:50vh;
+  background:#000;
+  transform:translateY(0);
+  will-change:transform;
+  z-index:2;
+}
+/* Bottom half */
+#void-bot{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:50vh;
+  background:#000;
+  transform:translateY(0);
+  will-change:transform;
+  z-index:2;
+}
+
+/* Center seam — 1px rule that expands */
+#void-seam{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  height:1px;
+  width:0px;
+  background:var(--primary);
+  box-shadow:0 0 8px var(--primary), 0 0 20px rgba(127,13,242,0.4);
+  z-index:5;
+  will-change:width,opacity;
+}
+
+/* Logo centered in the top panel */
+#void-logo{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%, calc(-50% - 20px));
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  z-index:10;
+  opacity:0;
+}
+.void-mark{
+  width:36px;height:36px;
+  display:grid;grid-template-columns:1fr 1fr;gap:3px;
+}
+.void-mark span{
+  display:block;border:1px solid var(--primary);
+}
+.void-mark span:nth-child(1){background:var(--primary);}
+.void-mark span:nth-child(4){background:rgba(127,13,242,0.4);}
+.void-wordmark{
+  font-family:'DM Mono',monospace;
+  font-size:11px;letter-spacing:0.35em;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+}
+
+/* Edge glow that follows the opening seam */
+#seam-glow-top{
+  position:absolute;
+  top:50%;left:0;right:0;
+  height:120px;
+  background:linear-gradient(to bottom, transparent, rgba(127,13,242,0.06) 50%, transparent);
+  transform:translateY(-50%);
+  opacity:0;
+  z-index:3;
+  pointer-events:none;
+}
+#seam-glow-bot{
+  position:absolute;
+  top:50%;left:0;right:0;
+  height:120px;
+  background:linear-gradient(to top, transparent, rgba(127,13,242,0.06) 50%, transparent);
+  transform:translateY(-50%);
+  opacity:0;
+  z-index:3;
+  pointer-events:none;
+}
+
+/* Purple edge lines that frame the opening */
+.void-edge-line{
+  position:absolute;
+  left:0;right:0;height:1px;
+  background:rgba(127,13,242,0.15);
+  opacity:0;z-index:4;
+}
+#vel-top{top:50%;}
+#vel-bot{bottom:50%;}
+
+/* ── HERO ── */
+#hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  padding:120px 40px;
+  overflow:hidden;
+}
+.hero-orb-1{
+  position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px);
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(127,13,242,0.2) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-60%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(127,13,242,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(127,13,242,0.04) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent);
+}
+
+.h-eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:0.4em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:28px;
+  display:flex;align-items:center;gap:16px;
+  opacity:0;transform:translateY(20px);
+  transition:all 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+.h-eyebrow::before,.h-eyebrow::after{content:'';width:32px;height:1px;background:var(--primary);opacity:0.5;}
+.h-hl{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(64px,10vw,140px);
+  font-weight:300;line-height:0.92;letter-spacing:-0.02em;
+  margin-bottom:32px;
+  opacity:0;transform:translateY(32px);
+  transition:all 1s 0.12s cubic-bezier(0.16,1,0.3,1);
+}
+.h-hl em{color:var(--primary);font-style:italic;}
+.h-sub{
+  font-size:18px;font-weight:300;color:var(--muted);
+  max-width:480px;line-height:1.85;margin-bottom:48px;
+  opacity:0;transform:translateY(24px);
+  transition:all 0.9s 0.22s cubic-bezier(0.16,1,0.3,1);
+}
+.h-btn{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:0.25em;text-transform:uppercase;
+  background:var(--primary);color:#fff;border:none;
+  padding:16px 48px;cursor:pointer;
+  box-shadow:0 0 32px rgba(127,13,242,0.35);
+  opacity:0;transform:translateY(16px);
+  transition:all 0.8s 0.32s cubic-bezier(0.16,1,0.3,1);
+}
+#hero.open .h-eyebrow,
+#hero.open .h-hl,
+#hero.open .h-sub,
+#hero.open .h-btn{opacity:1;transform:translateY(0);}
+
+#grain{
+  position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+</style>
+</head>
+<body>
+<div id="grain"></div>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div id="void-top"></div>
+  <div id="void-bot"></div>
+  <div id="void-seam"></div>
+  <div id="seam-glow-top"></div>
+  <div id="seam-glow-bot"></div>
+  <div class="void-edge-line" id="vel-top"></div>
+  <div class="void-edge-line" id="vel-bot"></div>
+
+  <div id="void-logo">
+    <div class="void-mark">
+      <span></span><span></span>
+      <span></span><span></span>
+    </div>
+    <div class="void-wordmark">Snapwise</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orb-1"></div>
+  <div class="h-eyebrow">Screenshot Intelligence</div>
+  <h1 class="h-hl">Your saves,<br/>finally <em>read.</em></h1>
+  <p class="h-sub">Snapwise extracts meaning from every screenshot — automatically sorted, permanently retrievable, entirely yours.</p>
+  <button class="h-btn">Start Organizing</button>
+</div>
+
+<script>
+function lerp(a,b,t){return a+(b-a)*t;}
+function easeOutExpo(t){return t===1?1:1-Math.pow(2,-10*t);}
+function easeInOutQuart(t){return t<0.5?8*t*t*t*t:1-Math.pow(-2*t+2,4)/2;}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+const voidTop   = document.getElementById('void-top');
+const voidBot   = document.getElementById('void-bot');
+const seam      = document.getElementById('void-seam');
+const voidLogo  = document.getElementById('void-logo');
+const glowTop   = document.getElementById('seam-glow-top');
+const glowBot   = document.getElementById('seam-glow-bot');
+const hero      = document.getElementById('hero');
+
+// Animate a value over duration
+function animate(duration, onFrame, onComplete){
+  const start = performance.now();
+  function tick(now){
+    const t = Math.min((now-start)/duration, 1);
+    onFrame(t);
+    if(t<1) requestAnimationFrame(tick);
+    else if(onComplete) onComplete();
+  }
+  requestAnimationFrame(tick);
+}
+
+async function runVoid(){
+  // Phase 1: Logo fades in silently
+  await delay(200);
+  voidLogo.style.transition = 'opacity 0.8s ease';
+  voidLogo.style.opacity = '1';
+
+  await delay(1000);
+
+  // Phase 2: Seam line grows from center outward
+  glowTop.style.transition = 'opacity 0.4s ease';
+  glowBot.style.transition = 'opacity 0.4s ease';
+  glowTop.style.opacity = '1';
+  glowBot.style.opacity = '1';
+
+  await new Promise(res => {
+    animate(900, t => {
+      const e = easeOutExpo(t);
+      const w = e * window.innerWidth;
+      seam.style.width = w + 'px';
+      seam.style.opacity = String(Math.min(t * 3, 1));
+    }, res);
+  });
+
+  await delay(180);
+
+  // Logo fades as void begins to open
+  voidLogo.style.transition = 'opacity 0.3s ease';
+  voidLogo.style.opacity = '0';
+
+  await delay(100);
+
+  // Phase 3: THE EYE OPENS — panels slide apart
+  // Simultaneously: top goes up, bottom goes down
+  await new Promise(res => {
+    animate(1200, t => {
+      const e = easeInOutQuart(t);
+      const dist = e * (window.innerHeight * 0.5 + 20); // overshoot slightly
+      voidTop.style.transform = `translateY(-${dist}px)`;
+      voidBot.style.transform = `translateY(${dist}px)`;
+      // Seam fades as panels open
+      seam.style.opacity = String(1 - e);
+      glowTop.style.opacity = String(0.8 - e * 0.8);
+      glowBot.style.opacity = String(0.8 - e * 0.8);
+    }, res);
+  });
+
+  // Hero content begins
+  hero.classList.add('open');
+
+  await delay(200);
+
+  // Preloader fully gone
+  document.getElementById('preloader').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.body.style.overflow = 'hidden';
+runVoid();
+</script>
+</body>
+</html>

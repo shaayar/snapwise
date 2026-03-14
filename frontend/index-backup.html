@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Screenshot Intelligence</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .landing-container {
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .hero {
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 36px;
+      margin: 0 0 10px 0;
+      color: #1a1a1a;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #666;
+      margin: 0 0 30px 0;
+      line-height: 1.6;
+    }
+
+    .action-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .action-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .action-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .action-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .action-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      color: #1a1a1a;
+    }
+
+    .action-description {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .app-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .app-button:hover {
+      background: #0056b3;
+    }
+
+    .secondary-button {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 0 5px;
+    }
+
+    .secondary-button:hover {
+      background: #5a6268;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .footer p {
+      color: #666;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    @media (max-width: 768px) {
+      .action-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .hero h1 {
+        font-size: 28px;
+      }
+      
+      .hero p {
+        font-size: 16px;
+      }
+    }
+ 
+    .result {
+      margin-top: 20px;
+      text-align: left;
+      font-size: 14px;
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .feedback-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f0f4ff;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+
+    .category-options {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .category-option {
+      padding: 10px 15px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      min-width: 120px;
+      text-align: center;
+      transform: scale(1);
+    }
+
+    .category-option:hover {
+      border-color: #007bff;
+      background: #f8f9ff;
+    }
+
+    .category-option.selected {
+      border-color: #28a745;
+      background: #d4edda;
+      font-weight: bold;
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .category-option .confidence {
+      font-size: 11px;
+      color: #666;
+      display: block;
+      margin-top: 3px;
+    }
+
+    .custom-category {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+    }
+
+    .feedback-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .feedback-btn {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .feedback-btn:hover {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .feedback-btn.correct {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .feedback-btn.incorrect {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="landing-container">
+    <div class="hero">
+      <h1>📸 Screenshot Intelligence</h1>
+      <p>Upload screenshots, extract text, and organize them automatically into smart categories</p>
+    </div>
+
+    <div class="action-cards">
+      <div class="action-card">
+        <div class="action-icon">📤</div>
+        <h3 class="action-title">Upload & Analyze</h3>
+        <p class="action-description">Upload screenshots to automatically categorize them into watch later, read later, links, events, and more</p>
+        <button class="app-button" onclick="startApp()">Start Analyzing</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon">📋</div>
+        <h3 class="action-title">My List</h3>
+        <p class="action-description">View your organized screenshots and manage your personal collections</p>
+        <button class="secondary-button" onclick="viewMyList()">View My List</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon">🏷️</div>
+        <h3 class="action-title">Categories</h3>
+        <p class="action-description">See all your categories and how confident the AI is about each type</p>
+        <button class="secondary-button" onclick="viewMyCategories()">Manage Categories</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Built with ❤️ for smart screenshot organization</p>
+      <p><small>Powered by AI text classification • OCR by Tesseract.js</small></p>
+    </div>
+  </div>
+
+  <!-- Hidden upload interface -->
+  <div id="uploadInterface" style="display: none;">
+    <div class="card">
+      <h1>Upload Screenshots</h1>
+      
+      <input type="file" id="fileInput" accept="image/*" multiple/>
+      <br />
+      <button onclick="uploadFile()">Upload & Analyze</button>
+      <button onclick="viewMyList()" style="margin-left: 10px; background: #007bff;">📋 My List</button>
+      <button onclick="viewMyCategories()" style="margin-left: 10px; background: #6f42c1;">🏷️ Categories</button>
+      <button onclick="backToLanding()" style="margin-left: 10px; background: #6c757d;">← Back</button>
+
+      <div id="previewContainer" style="margin-top:20px;"></div>
+      <div class="result" id="resultBox" style="display:none;"></div>
+      <div id="feedbackContainer"></div>
+    </div>
+  </div>
+
+  <!-- <div class="card">
+    <h1>Screenshot Intelligence</h1>
+
+    <input type="file" id="fileInput" accept="image/*" multiple/>
+    <br />
+    <button onclick="uploadFile()">Upload & Analyze</button>
+    <button onclick="viewMyList()" style="margin-left: 10px; background: #007bff;">📋 My List</button>
+    <button onclick="viewMyCategories()" style="margin-left: 10px; background: #6f42c1;">🏷️ Categories</button>
+
+    <div id="previewContainer" style="margin-top:20px;"></div>
+
+    <div class="result" id="resultBox" style="display:none;"></div>
+    <div id="feedbackContainer"></div>
+  </div> -->
+
+<script>
+  // Landing page functions
+  function startApp() {
+    document.querySelector('.landing-container').style.display = 'none';
+    document.getElementById('uploadInterface').style.display = 'block';
+  }
+
+  function backToLanding() {
+    document.getElementById('uploadInterface').style.display = 'none';
+    document.querySelector('.landing-container').style.display = 'flex';
+    
+    // Clear results when going back
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('feedbackContainer').innerHTML = '';
+    document.getElementById('previewContainer').innerHTML = '';
+  }
+
+  // Upload interface functions (existing)
+  async function uploadFile() {
+    const fileInput = document.getElementById("fileInput");
+    const resultBox = document.getElementById("resultBox");
+    const previewContainer = document.getElementById("previewContainer");
+    const feedbackContainer = document.getElementById("feedbackContainer");
+
+    if (!fileInput.files.length) {
+      alert("Please select a screenshot first.");
+      return;
+    }
+
+    previewContainer.innerHTML = "";
+    feedbackContainer.innerHTML = "";
+    resultBox.style.display = "block";
+    resultBox.innerText = "Processing...";
+
+    const formData = new FormData();
+    const files = fileInput.files;
+
+    for (let file of files) {
+      formData.append("screenshots", file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.style.width = "200px";
+        img.style.margin = "10px";
+        img.style.borderRadius = "8px";
+        img.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+        previewContainer.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    try {
+      const response = await fetch("/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      resultBox.innerText = JSON.stringify(data, null, 2);
+      
+      // Show feedback options for each result
+      showFeedbackOptions(data.results);
+
+    } catch (error) {
+      console.error("Upload error:", error);
+      resultBox.innerText = `Error uploading file: ${error.message}`;
+    }
+  }
+
+  function showFeedbackOptions(results) {
+    const feedbackContainer = document.getElementById("feedbackContainer");
+    feedbackContainer.innerHTML = "";
+
+    results.forEach((result, index) => {
+      const feedbackSection = document.createElement("div");
+      feedbackSection.className = "feedback-section";
+      
+      // Create category options HTML
+      const categoryOptions = result.topCategories.map(cat => {
+        const isSelected = cat.category === result.category;
+        const showCustomInput = cat.isCustom || (cat.category === "unsorted" && cat.confidence === 0);
+        
+        if (showCustomInput) {
+          return `
+            <div class="category-option custom-category">
+              <input type="text" 
+                     id="custom-category-${result.id}" 
+                     placeholder="Type new category..." 
+                     style="width: 150px; padding: 5px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <button onclick="selectCustomCategory(${result.id})" 
+                      style="padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Add Custom
+              </button>
+            </div>
+          `;
+        }
+        
+        return `
+          <div class="category-option ${isSelected ? 'selected' : ''}" 
+               onclick="selectCategory(${result.id}, '${cat.category}', this)"
+               data-category="${cat.category}">
+            ${formatCategoryName(cat.category)}
+            <span class="confidence">confidence: ${cat.confidence}</span>
+          </div>
+        `;
+      }).join('');
+
+      feedbackSection.innerHTML = `
+        <strong>File: ${result.file}</strong><br>
+        <div style="margin: 10px 0;">
+          <strong>Choose the correct category:</strong>
+        </div>
+        <div class="category-options">
+          ${categoryOptions}
+        </div>
+        <div style="margin-top: 15px;">
+          <button onclick="submitCategoryChoice(${result.id})" 
+                  style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            ✓ Add to My List
+          </button>
+        </div>
+        <div id="confirmation-${result.id}" style="display:none; margin-top:10px; color: #28a745; font-weight: bold;">
+          ✓ Added to your list!
+        </div>
+      `;
+      feedbackContainer.appendChild(feedbackSection);
+    });
+  }
+
+  function formatCategoryName(category) {
+    const names = {
+      'watch_later': '🎬 Watch Later',
+      'read_later': '📚 Read Later', 
+      'saved_links': '🔗 Saved Links',
+      'listen_later': '🎵 Listen Later',
+      'events': '📅 Events',
+      'unsorted': '📁 Unsorted'
+    };
+    return names[category] || category;
+  }
+
+  let selectedCategories = {}; // Store user selections
+
+  function selectCategory(resultId, category, element) {
+    // Remove previous selection
+    const parent = element.parentElement;
+    parent.querySelectorAll('.category-option').forEach(opt => {
+      opt.classList.remove('selected');
+    });
+    
+    // Add selection to clicked element
+    element.classList.add('selected');
+    
+    // Store selection
+    selectedCategories[resultId] = category;
+  }
+
+  function selectCustomCategory(resultId) {
+    const customInput = document.getElementById(`custom-category-${resultId}`);
+    const customCategory = customInput.value.trim();
+    
+    if (!customCategory) {
+      alert("Please enter a category name");
+      return;
+    }
+    
+    // Store custom category
+    selectedCategories[resultId] = customCategory;
+    
+    // Update UI to show selection
+    const customDiv = customInput.parentElement;
+    customDiv.innerHTML = `
+      <div class="category-option selected" style="background: #e3f2fd; border-color: #2196f3;">
+        🏷️ ${customCategory}
+        <span class="confidence">custom category</span>
+      </div>
+    `;
+  }
+
+  function showCorrectionOptions(id, currentCategory) {
+    const correctionDiv = document.getElementById(`correction-${id}`);
+    correctionDiv.style.display = correctionDiv.style.display === "none" ? "block" : "none";
+  }
+
+  async function submitCategoryChoice(resultId) {
+    const selectedCategory = selectedCategories[resultId];
+    
+    if (!selectedCategory) {
+      alert("Please select a category first!");
+      return;
+    }
+
+    try {
+      const response = await fetch("/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: resultId,
+          userFeedback: "user_selected",
+          correctedCategory: selectedCategory
+        })
+      });
+
+      if (response.ok) {
+        // Hide the entire feedback section for this item
+        const feedbackSection = document.querySelector(`#confirmation-${resultId}`).closest('.feedback-section');
+        feedbackSection.style.opacity = "0.3";
+        feedbackSection.style.pointerEvents = "none";
+        
+        // Show success message in the section
+        feedbackSection.innerHTML = `
+          <div style="text-align: center; padding: 20px; color: #28a745; font-weight: bold;">
+            ✓ Added to your ${formatCategoryName(selectedCategory)} list!
+          </div>
+        `;
+        
+      } else {
+        alert("Failed to save to list");
+      }
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Error saving to list");
+    }
+  }
+
+  async function viewMyList() {
+    try {
+      const response = await fetch("/my-list");
+      const data = await response.json();
+      
+      const resultBox = document.getElementById("resultBox");
+      const feedbackContainer = document.getElementById("feedbackContainer");
+      const previewContainer = document.getElementById("previewContainer");
+      
+      // Clear other sections
+      previewContainer.innerHTML = "";
+      feedbackContainer.innerHTML = "";
+      
+      if (data.total === 0) {
+        resultBox.innerHTML = "📝 Your list is empty. Upload some screenshots and add them to your list!";
+        resultBox.style.display = "block";
+        return;
+      }
+      
+      let html = `<h3>📋 My List (${data.total} items)</h3><br>`;
+      
+      // Sort categories by average confidence (highest first)
+      const sortedCategories = Object.entries(data.categories).sort(([catA, itemsA], [catB, itemsB]) => {
+        const avgConfA = itemsA.reduce((sum, item) => sum + item.confidence, 0) / itemsA.length;
+        const avgConfB = itemsB.reduce((sum, item) => sum + item.confidence, 0) / itemsB.length;
+        return avgConfB - avgConfA;
+      });
+      
+      sortedCategories.forEach(([category, items]) => {
+        const avgConfidence = (items.reduce((sum, item) => sum + item.confidence, 0) / items.length).toFixed(1);
+        
+        html += `
+          <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <h4>${formatCategoryName(category)} (${items.length}) - Avg Confidence: ${avgConfidence}</h4>
+            <div style="margin-top: 10px;">
+        `;
+        
+        items.forEach(item => {
+          html += `
+            <div style="margin-bottom: 8px; padding: 8px; background: white; border-radius: 4px; font-size: 12px;">
+              <strong>ID: ${item.id}</strong> - ${item.text}
+              <br><small style="color: #666;">Confidence: ${item.confidence} | Added: ${new Date(item.createdAt).toLocaleDateString()}</small>
+            </div>
+          `;
+        });
+        
+        html += `</div></div>`;
+      });
+      
+      resultBox.innerHTML = html;
+      resultBox.style.display = "block";
+      
+    } catch (error) {
+      console.error("Error fetching list:", error);
+      alert("Error loading your list");
+    }
+  }
+
+  async function viewMyCategories() {
+    try {
+      const response = await fetch("/my-categories");
+      const data = await response.json();
+      
+      const resultBox = document.getElementById("resultBox");
+      const feedbackContainer = document.getElementById("feedbackContainer");
+      const previewContainer = document.getElementById("previewContainer");
+      
+      // Clear other sections
+      previewContainer.innerHTML = "";
+      feedbackContainer.innerHTML = "";
+      
+      if (data.total === 0) {
+        resultBox.innerHTML = "📝 No categories yet. Upload some screenshots and add them to categories!";
+        resultBox.style.display = "block";
+        return;
+      }
+      
+      let html = `<h3>🏷️ My Categories (${data.total} categories)</h3><br>`;
+      html += `<p style="color: #666; margin-bottom: 20px;">Categories sorted by average model confidence</p>`;
+      
+      data.categories.forEach((cat, index) => {
+        const confidenceColor = cat.avgConfidence >= 6 ? '#28a745' : 
+                              cat.avgConfidence >= 4 ? '#ffc107' : '#dc3545';
+        
+        html += `
+          <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid ${confidenceColor};">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="margin: 0;">${formatCategoryName(cat.finalCategory)}</h4>
+                <p style="margin: 5px 0; color: #666; font-size: 14px;">
+                  ${cat.count} items | Avg Confidence: <strong style="color: ${confidenceColor}">${cat.avgConfidence.toFixed(1)}</strong>
+                </p>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 24px; font-weight: bold; color: ${confidenceColor};">
+                  #${index + 1}
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      resultBox.innerHTML = html;
+      resultBox.style.display = "block";
+      
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      alert("Error loading categories");
+    }
+  }
+
+  async function submitFeedback(id, feedback, correctedCategory) {
+    try {
+      const response = await fetch("/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: id,
+          userFeedback: feedback,
+          correctedCategory: correctedCategory
+        })
+      });
+
+      if (response.ok) {
+        // Hide the feedback section for this item
+        const feedbackSection = document.querySelector(`#correction-${id}`).closest('.feedback-section');
+        feedbackSection.style.opacity = "0.5";
+        feedbackSection.innerHTML += "<br><small>✓ Feedback submitted</small>";
+      } else {
+        alert("Failed to submit feedback");
+      }
+    } catch (error) {
+      console.error("Feedback error:", error);
+      alert("Error submitting feedback");
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Snapwise — Your saves, finally read.</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&amp;family=DM+Mono:wght@400;500&amp;family=Jost:wght@300;400;500&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- GSAP for Scroll Animations (Standard alternative to Framer Motion for pure HTML/JS) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        snapBg: '#050308',
+                        snapPrimary: '#7f0df2',
+                        snapPrimaryDim: '#3D0875',
+                        snapSurface: '#0F0A14',
+                        snapText: '#F0ECF7',
+                        snapTextMuted: '#6B6275',
+                        snapTextDim: '#2E2838',
+                    },
+                    fontFamily: {
+                        display: ['"Cormorant Garamond"', 'serif'],
+                        ui: ['Jost', 'sans-serif'],
+                        label: ['"DM Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style data-purpose="global-styles">
+        :root {
+            --primary-glow: rgba(127, 13, 242, 0.15);
+            --border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body {
+            background-color: #050308;
+            color: #F0ECF7;
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Reset border radius for all UI elements */
+        * {
+            border-radius: 0 !important;
+        }
+
+        .primary-glow-box {
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .section-pinned {
+            height: 200vh;
+            position: relative;
+        }
+
+        .sticky-container {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Custom Transitions */
+        .fade-step {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fade-step.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .rotated-square {
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- BEGIN: GrainOverlay -->
+    <div class="grain-overlay"></div>
+    <!-- END: GrainOverlay -->
+    <!-- BEGIN: MainNav -->
+    <nav
+        class="fixed top-0 left-0 w-full h-[72px] z-[100] bg-black/80 backdrop-blur-md border-b border-[rgba(255,255,255,0.06)] px-6 lg:px-12 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div class="w-4 h-4 bg-snapPrimary rotated-square"></div>
+            <span class="font-label text-xs tracking-[0.2em] uppercase">Snapwise</span>
+        </div>
+        <button
+            class="border border-snapPrimary px-6 py-2 font-label text-[10px] tracking-[0.2em] uppercase hover:bg-snapPrimary/10 transition-colors duration-300">
+            Sign Up
+        </button>
+    </nav>
+    <!-- END: MainNav -->
+    <!-- BEGIN: HeroSection -->
+    <main>
+        <section
+            class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden"
+            data-purpose="hero">
+            <!-- Center Glow -->
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-snapPrimary opacity-15 blur-[120px] rounded-full pointer-events-none">
+            </div>
+            <div class="relative z-10 flex flex-col items-center">
+                <p class="font-label text-[10px] tracking-[0.2em] uppercase text-snapPrimary mb-6">Screenshot
+                    Intelligence</p>
+                <h1
+                    class="font-display font-light text-[80px] md:text-[120px] lg:text-[160px] leading-[0.9] max-w-5xl mb-8">
+                    Your saves, <br />
+                    finally <span class="italic text-snapPrimary">read.</span>
+                </h1>
+                <p class="font-ui text-lg md:text-xl text-snapTextMuted max-w-[480px] leading-relaxed mb-12">
+                    Snapwise extracts meaning from every screenshot you take — automatically sorted, permanently
+                    retrievable.
+                </p>
+                <button
+                    class="bg-snapPrimary px-10 py-4 font-label text-[11px] tracking-[0.2em] uppercase primary-glow-box hover:brightness-110 transition-all">
+                    Start Organizing
+                </button>
+            </div>
+            <div class="absolute bottom-12 flex flex-col items-center gap-2">
+                <span class="font-label text-[10px] tracking-[0.2em] uppercase text-snapTextDim">Scroll</span>
+                <div class="w-[1px] h-8 bg-gradient-to-b from-snapPrimary to-transparent"></div>
+            </div>
+        </section>
+        <!-- END: HeroSection -->
+        <!-- BEGIN: ProblemSection (Scrollytelling) -->
+        <section class="section-pinned border-y border-[rgba(255,255,255,0.06)]" data-purpose="problem-scrollytelling"
+            id="problem-section">
+            <div class="sticky-container px-6 lg:px-24">
+                <div class="grid grid-cols-1 lg:grid-cols-2 w-full gap-20 items-center">
+                    <!-- Left Side: Text Steps -->
+                    <div class="relative h-[200px]">
+                        <div class="absolute inset-0 flex flex-col justify-center" id="prob-text-1">
+                            <h2 class="font-display text-5xl md:text-7xl font-light">You capture everything. <br />
+                                <span class="text-snapTextMuted">You retrieve nothing.</span></h2>
+                        </div>
+                        <div class="absolute inset-0 flex flex-col justify-center opacity-0" id="prob-text-2">
+                            <h2 class="font-display text-5xl md:text-7xl font-light">You know it's in there. <br />
+                                <span class="text-snapTextMuted">Somewhere.</span></h2>
+                        </div>
+                        <div class="absolute inset-0 flex flex-col justify-center opacity-0" id="prob-text-3">
+                            <h2 class="font-display text-5xl md:text-7xl font-light">Until now. Snapwise <br /> <span
+                                    class="text-snapPrimary">reads what you saved.</span></h2>
+                        </div>
+                    </div>
+                    <!-- Right Side: Visuals -->
+                    <div
+                        class="relative h-[400px] bg-snapSurface border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                        <!-- Visual 1: Chaotic Grid -->
+                        <div class="absolute inset-0 grid grid-cols-3 gap-2 p-4 blur-sm opacity-100" id="prob-vis-1">
+                            <div class="bg-snapTextDim w-full h-24"></div>
+                            <div class="bg-snapTextDim w-full h-32"></div>
+                            <div class="bg-snapTextDim w-full h-20"></div>
+                            <div class="bg-snapTextDim w-full h-28"></div>
+                            <div class="bg-snapTextDim w-full h-24"></div>
+                            <div class="bg-snapTextDim w-full h-36"></div>
+                        </div>
+                        <!-- Visual 2: Empty Search -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 opacity-0"
+                            id="prob-vis-2">
+                            <div class="w-full border border-snapTextDim p-4 mb-4 flex justify-between">
+                                <span class="font-ui text-snapTextMuted">"that blue chair"</span>
+                                <span class="text-snapTextMuted">🔍</span>
+                            </div>
+                            <p class="font-label text-[10px] text-snapTextDim uppercase tracking-widest">0 results found
+                            </p>
+                        </div>
+                        <!-- Visual 3: Organized Cards -->
+                        <div class="absolute inset-0 p-8 grid grid-cols-2 gap-4 opacity-0" id="prob-vis-3">
+                            <div class="border border-snapPrimary/30 p-4 flex flex-col justify-end bg-snapPrimary/5">
+                                <span class="font-label text-[10px] text-snapPrimary uppercase">Buy Later</span>
+                            </div>
+                            <div class="border border-white/10 p-4 flex flex-col justify-end">
+                                <span class="font-label text-[10px] text-snapTextMuted uppercase">Watch List</span>
+                            </div>
+                            <div class="border border-white/10 p-4 flex flex-col justify-end">
+                                <span class="font-label text-[10px] text-snapTextMuted uppercase">Inspiration</span>
+                            </div>
+                            <div class="border border-white/10 p-4 flex flex-col justify-end">
+                                <span class="font-label text-[10px] text-snapTextMuted uppercase">Archive</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- END: ProblemSection -->
+        <!-- BEGIN: HowItWorksSection -->
+        <section class="relative min-h-[300vh]" data-purpose="how-it-works-scrollytelling" id="how-it-works">
+            <div class="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
+                <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <!-- Text Content -->
+                    <div class="space-y-24">
+                        <div class="step-content" id="step-txt-1">
+                            <span class="font-label text-xs text-snapPrimary uppercase tracking-widest block mb-4">01 —
+                                Capture</span>
+                            <h3 class="font-display text-5xl font-light mb-6">Take a screenshot. <br /> Business as
+                                usual.</h3>
+                            <p class="font-ui text-snapTextMuted text-lg max-w-sm">Use your phone or desktop shortcut.
+                                Snapwise watches your library silently.</p>
+                        </div>
+                        <div class="step-content opacity-20" id="step-txt-2">
+                            <span class="font-label text-xs text-snapPrimary uppercase tracking-widest block mb-4">02 —
+                                Extract</span>
+                            <h3 class="font-display text-5xl font-light mb-6">AI Vision scans <br /> every pixel.</h3>
+                            <p class="font-ui text-snapTextMuted text-lg max-w-sm">Text, objects, and sentiment are
+                                indexed instantly. No more manual tagging.</p>
+                        </div>
+                        <div class="step-content opacity-20" id="step-txt-3">
+                            <span class="font-label text-xs text-snapPrimary uppercase tracking-widest block mb-4">03 —
+                                Organize</span>
+                            <h3 class="font-display text-5xl font-light mb-6">Find anything <br /> with simple words.
+                            </h3>
+                            <p class="font-ui text-snapTextMuted text-lg max-w-sm">Your chaos, transformed into a
+                                searchable second brain.</p>
+                        </div>
+                    </div>
+                    <!-- Visual Mockup Container -->
+                    <div
+                        class="relative h-[500px] w-full max-w-md mx-auto bg-snapSurface border border-white/5 p-4 overflow-hidden shadow-2xl">
+                        <!-- Phone Mockup Frame -->
+                        <div class="absolute inset-0 border-8 border-snapTextDim/20 m-4 pointer-events-none"></div>
+                        <!-- Step 1: Phone Flash -->
+                        <div class="absolute inset-0 flex items-center justify-center bg-white opacity-0 z-50"
+                            id="step-vis-1"></div>
+                        <!-- Screenshot Content -->
+                        <div class="p-8 h-full flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="h-4 w-2/3 bg-snapTextDim"></div>
+                                <div class="h-4 w-1/2 bg-snapTextDim"></div>
+                                <div class="h-48 w-full bg-snapTextDim relative overflow-hidden">
+                                    <!-- Image Placeholder -->
+                                    <div class="absolute inset-0 bg-[#1A1520] flex items-center justify-center">
+                                        <div class="w-16 h-16 bg-blue-900/30 border border-blue-500/50"></div>
+                                    </div>
+                                    <!-- Step 2: Highlight boxes -->
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-snapPrimary w-20 h-20 opacity-0 scale-150"
+                                        id="step-vis-2-box"></div>
+                                </div>
+                            </div>
+                            <!-- Step 3: Dashboard result -->
+                            <div class="opacity-0 translate-y-10" id="step-vis-3-ui">
+                                <div class="border-t border-white/10 pt-4">
+                                    <p class="font-label text-[9px] uppercase text-snapPrimary mb-2">Search Result</p>
+                                    <div class="text-xs font-ui text-snapText">"Blue velvet armchair from Instagram ad"
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- END: HowItWorksSection -->
+        <!-- BEGIN: CTASection -->
+        <section class="py-32 border-t border-[rgba(255,255,255,0.06)] bg-snapSurface/30" data-purpose="final-cta">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <h2 class="font-display text-6xl md:text-[100px] font-light leading-tight mb-16">
+                    Start with <br /> <span class="italic">one screenshot.</span>
+                </h2>
+                <form class="max-w-md mx-auto space-y-4" onsubmit="event.preventDefault()">
+                    <input
+                        class="w-full bg-snapBg border border-snapTextDim px-6 py-4 focus:border-snapPrimary outline-none text-snapText font-ui"
+                        placeholder="Email Address" type="email" />
+                    <input
+                        class="w-full bg-snapBg border border-snapTextDim px-6 py-4 focus:border-snapPrimary outline-none text-snapText font-ui"
+                        placeholder="Password" type="password" />
+                    <button
+                        class="w-full bg-snapPrimary py-4 mt-4 font-label text-[11px] tracking-[0.2em] uppercase primary-glow-box hover:brightness-110 transition-all">
+                        Create Free Account
+                    </button>
+                </form>
+            </div>
+        </section>
+        <!-- END: CTASection -->
+        <!-- BEGIN: Footer -->
+        <footer class="py-20 border-t border-[rgba(255,255,255,0.06)] px-6 lg:px-24" data-purpose="footer">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
+                <div class="flex items-center gap-4">
+                    <div class="w-4 h-4 bg-snapPrimary rotated-square"></div>
+                    <span class="font-label text-xs tracking-[0.2em] uppercase">Snapwise</span>
+                </div>
+                <div class="flex flex-wrap gap-8 font-label text-[10px] uppercase tracking-widest text-snapTextMuted">
+                    <a class="hover:text-snapPrimary transition-colors" href="#">Privacy</a>
+                    <a class="hover:text-snapPrimary transition-colors" href="#">Terms</a>
+                    <a class="hover:text-snapPrimary transition-colors" href="#">Contact</a>
+                </div>
+                <p class="font-label text-[10px] uppercase tracking-widest text-snapTextDim">
+                    © 2024 SNAPWISE. ALL RIGHTS RESERVED.
+                </p>
+            </div>
+        </footer>
+        <!-- END: Footer -->
+    </main>
+    <script data-purpose="animation-logic">
+        gsap.registerPlugin(ScrollTrigger);
+
+        // SECTION 2: Problem Statement Scrollytelling
+        const probTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#problem-section",
+                start: "top top",
+                end: "+=200%",
+                scrub: 1,
+                pin: true,
+            }
+        });
+
+        // Beat 1 to 2
+        probTl.to("#prob-text-1", { opacity: 0, y: -20, duration: 1 }, 0.3)
+            .to("#prob-vis-1", { opacity: 0, duration: 1 }, 0.3)
+            .to("#prob-text-2", { opacity: 1, y: 0, duration: 1 }, 0.5)
+            .to("#prob-vis-2", { opacity: 1, duration: 1 }, 0.5);
+
+        // Beat 2 to 3
+        probTl.to("#prob-text-2", { opacity: 0, y: -20, duration: 1 }, 1.3)
+            .to("#prob-vis-2", { opacity: 0, duration: 1 }, 1.3)
+            .to("#prob-text-3", { opacity: 1, y: 0, duration: 1 }, 1.5)
+            .to("#prob-vis-3", { opacity: 1, duration: 1 }, 1.5);
+
+
+        // SECTION 3: How It Works Scrollytelling
+        const howTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#how-it-works",
+                start: "top top",
+                end: "+=300%",
+                scrub: 1,
+                pin: true,
+            }
+        });
+
+        // Step 1: Flash
+        howTl.to("#step-vis-1", { opacity: 1, duration: 0.1 })
+            .to("#step-vis-1", { opacity: 0, duration: 0.5 });
+
+        // Step 2 transition
+        howTl.to("#step-txt-1", { opacity: 0.2, duration: 0.5 }, 1)
+            .to("#step-txt-2", { opacity: 1, duration: 0.5 }, 1)
+            .to("#step-vis-2-box", { opacity: 1, scale: 1, duration: 0.8 }, 1);
+
+        // Step 3 transition
+        howTl.to("#step-txt-2", { opacity: 0.2, duration: 0.5 }, 2)
+            .to("#step-txt-3", { opacity: 1, duration: 0.5 }, 2)
+            .to("#step-vis-3-ui", { opacity: 1, y: 0, duration: 0.8 }, 2);
+
+    </script>
+</body>
+
+</html>

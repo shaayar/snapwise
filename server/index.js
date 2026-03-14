@@ -4,7 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
 const fs = require("fs");
-const { saveResult, getAnalytics } = require("./db");
+const { saveResult, getAnalytics, saveFeedback, getUserList, getUserCategories } = require("./db");
 const { classify } = require("../engine/intentEngine");
 
 const app = express();
@@ -40,6 +40,16 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp|bmp|tiff/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    cb(new Error("Only image files are allowed (jpeg, jpg, png, gif, webp, bmp, tiff)"));
+  }
 });
 
 // -------------------
@@ -56,24 +66,30 @@ app.post("/upload", upload.array("screenshots", 20), async (req, res) => {
       return res.status(400).json({ error: "No files uploaded" });
     }
 
-    const results = [];
-
-    for (const file of req.files) {
-      const extractedText = await extractText(file.path);
+    // Process all files in parallel for better performance
+    const processPromises = req.files.map(async (file) => {
+      const { text: extractedText, confidence: ocrConfidence } = await extractText(file.path);
       const classification = classify(extractedText);
 
-      saveResult(
+      const resultId = await saveResult(
         extractedText,
         classification.category,
         classification.confidence
       );
 
-      results.push({
+      return {
+        id: resultId,
         file: file.filename,
         category: classification.category,
-        confidence: classification.confidence
-      });
-    }
+        confidence: classification.confidence,
+        extractedText: extractedText,
+        ocrConfidence: ocrConfidence,
+        scoreBreakdown: classification.scoreBreakdown,
+        topCategories: classification.topCategories
+      };
+    });
+
+    const results = await Promise.all(processPromises);
 
     res.json({
       processed: results.length,
@@ -84,6 +100,92 @@ app.post("/upload", upload.array("screenshots", 20), async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Batch processing failed" });
   }
+});
+
+// -------------------
+// Debug OCR Endpoint
+// -------------------
+app.post("/debug-ocr", upload.single("screenshot"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const { text: extractedText, confidence: ocrConfidence } = await extractText(req.file.path);
+    const classification = classify(extractedText);
+
+    res.json({
+      filename: req.file.filename,
+      extractedText: extractedText,
+      ocrConfidence: ocrConfidence,
+      classification: classification
+    });
+
+  } catch (error) {
+    console.error("Debug OCR Error:", error);
+    res.status(500).json({ error: "OCR processing failed" });
+  }
+});
+
+// -------------------
+// Feedback Endpoint
+// -------------------
+app.post("/feedback", (req, res) => {
+  const { id, userFeedback, correctedCategory } = req.body;
+  
+  if (!id || !userFeedback || !correctedCategory) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  saveFeedback(id, userFeedback, correctedCategory);
+  res.json({ message: "Feedback saved successfully" });
+});
+
+// -------------------
+// User List Endpoint
+// -------------------
+app.get("/my-list", (req, res) => {
+  getUserList((err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to fetch user list" });
+    }
+
+    // Group by category
+    const grouped = data.reduce((acc, item) => {
+      if (!acc[item.finalCategory]) {
+        acc[item.finalCategory] = [];
+      }
+      acc[item.finalCategory].push({
+        id: item.id,
+        text: item.extractedText.substring(0, 200) + (item.extractedText.length > 200 ? "..." : ""),
+        fullText: item.extractedText,
+        confidence: item.confidence,
+        createdAt: item.createdAt
+      });
+      return acc;
+    }, {});
+
+    res.json({
+      total: data.length,
+      categories: grouped
+    });
+  });
+});
+
+// -------------------
+// User Categories Management Endpoint
+// -------------------
+app.get("/my-categories", (req, res) => {
+  getUserCategories((err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to fetch user categories" });
+    }
+
+    res.json({
+      total: data.length,
+      categories: data
+    });
+  });
 });
 
 // -------------------

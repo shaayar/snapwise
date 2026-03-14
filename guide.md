@@ -32,7 +32,7 @@ If server runs → proceed.
 
 # 🔹 PHASE 1 – OCR Pipeline (Day 2)
 
-### 🧠 You:
+### 🧠 You
 
 Prompt AI:
 
@@ -116,7 +116,7 @@ UNSORTED:
 
 ---
 
-### 🤖 AI Tool:
+### 🤖 AI Tool
 
 Prompt:
 
@@ -175,7 +175,7 @@ Clear category sections
 
 ---
 
-### 🧠 You:
+### 🧠 You
 
 Prompt AI:
 

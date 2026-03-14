@@ -19,7 +19,7 @@ async function extractText(imagePath) {
   try {
     const processedImage = await preprocessImage(imagePath);
 
-    const { data: { text } } = await Tesseract.recognize(
+    const { data: { text, confidence } } = await Tesseract.recognize(
       processedImage,
       "eng"
     );
@@ -27,7 +27,7 @@ async function extractText(imagePath) {
     // Optional cleanup: delete processed image
     fs.unlinkSync(processedImage);
 
-    return text;
+    return { text, confidence };
   } catch (error) {
     console.error("OCR Error:", error);
     throw new Error("Failed to extract text");

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Snapwise — The Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0A0A0A;
+  --bg2:#111008;
+  --surface:#141414;
+  --primary:#B8924A;
+  --primary-b:#7A5F30;
+  --primary-d:rgba(184,146,74,0.1);
+  --primary-g:rgba(184,146,74,0.05);
+  --border:rgba(184,146,74,0.2);
+  --border-s:rgba(240,235,225,0.07);
+  --text:#F0EBE1;
+  --muted:#9A9080;
+  --dim:#3A342C;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-weight:300;overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--primary);color:#0A0A0A;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--primary-b);}
+
+#cursor{position:fixed;width:8px;height:8px;background:var(--primary);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(184,146,74,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease-out;}
+#grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-bottom:1px solid transparent;transition:background 0.4s,border-color 0.4s;}
+nav.scrolled{background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-color:var(--border-s);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-mark{width:26px;height:26px;display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.nav-mark span{display:block;border:1px solid var(--primary);}
+.nav-mark span:nth-child(1){background:var(--primary);}
+.nav-mark span:nth-child(4){background:rgba(184,146,74,0.35);}
+.nav-wordmark{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:20px;}
+.nav-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color 0.3s;}
+.nav-back:hover{color:var(--primary);}
+.nav-back::before{content:'←';font-size:14px;}
+#nav-menu-btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text);background:none;border:1px solid var(--border);padding:10px 28px;cursor:none;transition:all 0.3s;}
+#nav-menu-btn:hover{background:var(--primary);border-color:var(--primary);color:#0A0A0A;}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:0.1s;}.rd2{transition-delay:0.2s;}.rd3{transition-delay:0.3s;}.rd4{transition-delay:0.4s;}
+
+/* ── HERO ── */
+.intel-hero{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1fr;
+  padding-top:72px;
+  border-bottom:1px solid var(--border-s);
+  position:relative;overflow:hidden;
+}
+.intel-hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:100px 60px 100px 80px;
+  border-right:1px solid var(--border-s);
+  position:relative;z-index:1;
+}
+.ih-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--primary);margin-bottom:28px;display:flex;align-items:center;gap:14px;opacity:0;animation:fade-up 0.8s 0.2s forwards;}
+.ih-eyebrow::before{content:'';width:28px;height:1px;background:var(--primary);}
+.ih-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,6vw,92px);font-weight:300;line-height:0.95;letter-spacing:-0.02em;color:var(--text);margin-bottom:32px;opacity:0;animation:fade-up 1s 0.35s forwards;}
+.ih-headline em{font-style:italic;color:var(--primary);}
+.ih-body{font-size:17px;font-weight:300;color:var(--muted);line-height:1.9;max-width:420px;margin-bottom:48px;opacity:0;animation:fade-up 0.9s 0.5s forwards;}
+.ih-body strong{color:var(--text);font-weight:400;}
+.ih-stats{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border-s);opacity:0;animation:fade-up 0.8s 0.65s forwards;}
+.ih-stat{padding:24px 0;border-right:1px solid var(--border-s);}
+.ih-stat:last-child{border-right:none;padding-left:28px;}
+.ih-stat-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;line-height:1;color:var(--text);letter-spacing:-0.02em;}
+.ih-stat-num em{color:var(--primary);font-style:normal;}
+.ih-stat-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+/* Right — animated pipeline visual */
+.intel-hero-right{
+  background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  padding:80px 60px;
+  position:relative;overflow:hidden;
+}
+.pipeline{
+  width:100%;display:flex;flex-direction:column;gap:2px;
+  position:relative;z-index:1;
+}
+.pipeline-step{
+  background:var(--bg);border:1px solid var(--border-s);
+  padding:24px 28px;
+  display:grid;grid-template-columns:36px 1fr auto;
+  align-items:center;gap:20px;
+  opacity:0;transform:translateX(20px);
+  transition:border-color 0.3s;
+}
+.pipeline-step.animated{animation:pipe-in 0.5s forwards;}
+.pipeline-step:hover{border-color:var(--border);}
+.pipe-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--primary);}
+.pipe-info{}
+.pipe-title{font-size:14px;font-weight:400;color:var(--text);margin-bottom:4px;}
+.pipe-sub{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.pipe-status{
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.15em;
+  text-transform:uppercase;padding:5px 10px;
+  border:1px solid;
+}
+.pipe-status.done{color:var(--primary);border-color:var(--border);}
+.pipe-status.active{color:#0A0A0A;background:var(--primary);border-color:var(--primary);animation:status-pulse 2s infinite;}
+.pipe-status.pending{color:var(--dim);border-color:var(--dim);}
+@keyframes pipe-in{to{opacity:1;transform:translateX(0);}}
+@keyframes status-pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+
+.pipeline-connector{
+  width:1px;height:16px;background:linear-gradient(to bottom,var(--border-s),transparent);
+  margin:0 0 0 17px;
+}
+
+/* ── SECTION: HOW IT READS ── */
+.reads-section{
+  padding:120px 80px;
+  border-bottom:1px solid var(--border-s);
+}
+.section-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.section-label::before{content:'';width:24px;height:1px;background:var(--primary);}
+.section-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,5vw,72px);font-weight:300;line-height:1;letter-spacing:-0.02em;color:var(--text);margin-bottom:20px;}
+.section-headline em{color:var(--primary);font-style:italic;}
+.section-sub{font-size:17px;font-weight:300;color:var(--muted);max-width:540px;line-height:1.85;margin-bottom:80px;}
+.section-sub strong{color:var(--text);font-weight:400;}
+
+/* OCR demo */
+.ocr-demo{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  margin-bottom:80px;
+}
+.ocr-left{
+  background:var(--surface);padding:48px;
+  border:1px solid var(--border-s);
+  position:relative;overflow:hidden;
+}
+.ocr-right{
+  background:var(--bg2);padding:48px;
+  border:1px solid var(--border-s);
+  display:flex;flex-direction:column;gap:0;
+}
+.ocr-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;}
+.ocr-label span{color:var(--primary);}
+
+/* fake screenshot in OCR demo */
+.fake-ss{
+  background:var(--bg);border:1px solid var(--border-s);
+  padding:20px;position:relative;
+}
+.fake-ss-header{
+  background:#111;padding:8px 12px;margin:-20px -20px 16px;
+  display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border-s);
+}
+.fss-dot{width:7px;height:7px;border-radius:50%;}
+.fake-ss-img{
+  aspect-ratio:16/10;background:var(--dim);margin-bottom:14px;position:relative;overflow:hidden;
+}
+.fake-ss-img::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(184,146,74,0.12),transparent 60%);}
+.fake-ss-text{display:flex;flex-direction:column;gap:7px;}
+.fss-line{height:7px;background:var(--dim);position:relative;overflow:hidden;}
+.fss-line:nth-child(1){width:100%;}
+.fss-line:nth-child(2){width:78%;}
+.fss-line:nth-child(3){width:55%;}
+.fss-line.highlighted{border:1px solid var(--primary);background:rgba(184,146,74,0.1);}
+.fss-line.highlighted::after{
+  content:'';position:absolute;top:0;left:0;height:100%;width:0;
+  background:rgba(184,146,74,0.2);
+  animation:scan-line 1.5s 1s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes scan-line{to{width:100%;}}
+.fss-price-block{
+  margin-top:14px;display:flex;align-items:center;gap:12px;
+}
+.fss-price{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--text);position:relative;}
+.fss-price.highlighted{color:var(--primary);}
+.fss-price-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.fss-highlight-box{
+  position:absolute;inset:-4px;border:1px solid var(--primary);
+  background:rgba(184,146,74,0.08);
+  opacity:0;animation:box-in 0.3s 1.8s forwards;
+}
+@keyframes box-in{to{opacity:1;}}
+
+/* extracted fields */
+.ext-fields-list{display:flex;flex-direction:column;gap:8px;}
+.ext-field{
+  background:var(--bg);border:1px solid var(--border-s);
+  padding:12px 16px;display:grid;grid-template-columns:1fr auto;align-items:center;
+  opacity:0;animation:field-appear 0.4s forwards;
+}
+.ext-field:nth-child(1){animation-delay:0.8s;}
+.ext-field:nth-child(2){animation-delay:1.1s;}
+.ext-field:nth-child(3){animation-delay:1.4s;}
+.ext-field:nth-child(4){animation-delay:1.7s;}
+.ext-field:nth-child(5){animation-delay:2s;}
+@keyframes field-appear{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:translateX(0);}}
+.ef-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--primary);margin-bottom:4px;}
+.ef-val{font-size:13px;font-weight:300;color:var(--text);}
+.ef-confidence{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--muted);}
+
+/* ── CAPABILITY CARDS ── */
+.caps-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  margin-top:0;
+}
+.cap-card{
+  background:var(--surface);border:1px solid var(--border-s);
+  padding:40px 36px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.4s;
+}
+.cap-card:hover{border-color:rgba(184,146,74,0.2);}
+.cap-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);
+  opacity:0;transition:opacity 0.4s;
+}
+.cap-card:hover::after{opacity:0.5;}
+.cap-icon{
+  width:44px;height:44px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;font-size:20px;
+  transition:background 0.3s;
+}
+.cap-card:hover .cap-icon{background:var(--primary-d);}
+.cap-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:14px;letter-spacing:-0.01em;}
+.cap-body{font-size:14px;font-weight:300;color:var(--muted);line-height:1.8;}
+
+/* ── ACCURACY SECTION ── */
+.accuracy-section{
+  background:var(--bg2);padding:120px 80px;
+  border-top:1px solid var(--border-s);border-bottom:1px solid var(--border-s);
+}
+.acc-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.acc-left{}
+.acc-right{
+  background:var(--surface);border:1px solid var(--border-s);
+  padding:48px;
+}
+
+/* Accuracy meter */
+.acc-meter-list{display:flex;flex-direction:column;gap:28px;}
+.acc-meter-item{}
+.acc-meter-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.acc-meter-name{font-size:14px;font-weight:300;color:var(--text);}
+.acc-meter-pct{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.15em;color:var(--primary);}
+.acc-bar{height:2px;background:var(--dim);position:relative;overflow:hidden;}
+.acc-bar-fill{
+  position:absolute;top:0;left:0;height:100%;
+  background:linear-gradient(90deg,var(--primary-b),var(--primary));
+  width:0;
+  transition:width 1.2s cubic-bezier(0.16,1,0.3,1);
+  box-shadow:0 0 8px rgba(184,146,74,0.3);
+}
+
+/* ── PRIVACY DEEP DIVE ── */
+.privacy-section{
+  padding:120px 80px;
+  border-bottom:1px solid var(--border-s);
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.priv-left{}
+.priv-right{
+  display:flex;flex-direction:column;gap:2px;
+}
+.priv-principle{
+  background:var(--surface);border:1px solid var(--border-s);
+  padding:28px 32px;
+  display:grid;grid-template-columns:48px 1fr;gap:20px;align-items:start;
+  transition:border-color 0.3s;
+}
+.priv-principle:hover{border-color:rgba(184,146,74,0.2);}
+.pp-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--primary);padding-top:4px;}
+.pp-title{font-size:15px;font-weight:400;color:var(--text);margin-bottom:8px;}
+.pp-body{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;}
+
+/* ── CATEGORIES SHOWCASE ── */
+.cats-section{
+  padding:120px 80px;
+  border-bottom:1px solid var(--border-s);
+}
+.cats-intro{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-bottom:64px;align-items:end;}
+.cats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;
+}
+.cat-tile{
+  background:var(--surface);border:1px solid var(--border-s);
+  padding:28px 24px;
+  display:flex;flex-direction:column;gap:12px;
+  transition:background 0.3s,border-color 0.3s;
+  cursor:default;
+}
+.cat-tile:hover{background:var(--bg2);border-color:rgba(184,146,74,0.2);}
+.cat-tile-icon{font-size:24px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border-s);background:var(--bg);transition:border-color 0.3s;}
+.cat-tile:hover .cat-tile-icon{border-color:var(--border);}
+.cat-tile-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--primary);}
+.cat-tile-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6;}
+.cat-tile-count{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--dim);margin-top:auto;}
+
+/* ── FOOTER ── */
+footer{background:var(--bg);border-top:1px solid var(--border-s);padding:0 80px;}
+.footer-brand-name{font-family:'Cormorant Garamond',serif;font-size:clamp(72px,12vw,180px);font-weight:300;line-height:0.88;letter-spacing:-0.03em;color:transparent;-webkit-text-stroke:1px rgba(184,146,74,0.15);user-select:none;display:block;padding-top:60px;}
+.footer-bottom{border-top:1px solid var(--border-s);padding:24px 0;display:flex;align-items:center;justify-content:space-between;margin-top:40px;}
+.footer-copy{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);}
+.footer-links{display:flex;gap:32px;}
+.footer-links a{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color 0.3s;}
+.footer-links a:hover{color:var(--primary);}
+</style>
+</head>
+<body>
+<div id="cursor"></div><div id="cursor-ring"></div><div id="grain"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="snapwise-lp-v2.html">
+    <div class="nav-mark"><span></span><span></span><span></span><span></span></div>
+    <span class="nav-wordmark">Snapwise</span>
+  </a>
+  <div class="nav-right">
+    <a class="nav-back" href="snapwise-lp-v2.html">Back to home</a>
+    <button id="nav-menu-btn">Menu</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="intel-hero">
+  <div class="intel-hero-left">
+    <div class="ih-eyebrow">The Intelligence</div>
+    <h1 class="ih-headline">Not storage.<br/><em>Understanding.</em></h1>
+    <p class="ih-body">Every screenshot you take carries intent. A price you want to remember. A reference you'll need. A thought worth keeping. <strong>Snapwise extracts that intent and makes it permanent.</strong></p>
+    <div class="ih-stats">
+      <div class="ih-stat">
+        <div class="ih-stat-num">99<em>%</em></div>
+        <div class="ih-stat-label">OCR accuracy rate</div>
+      </div>
+      <div class="ih-stat">
+        <div class="ih-stat-num"><em>&lt;</em>2s</div>
+        <div class="ih-stat-label">Average parse time</div>
+      </div>
+    </div>
+  </div>
+  <div class="intel-hero-right">
+    <div class="pipeline" id="pipeline">
+      <div class="pipeline-step" style="animation-delay:0.2s">
+        <div class="pipe-num">01</div>
+        <div class="pipe-info"><div class="pipe-title">Screenshot received</div><div class="pipe-sub">Local file · PNG / JPG / WebP</div></div>
+        <div class="pipe-status done">Done</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-step" style="animation-delay:0.4s">
+        <div class="pipe-num">02</div>
+        <div class="pipe-info"><div class="pipe-title">OCR pass</div><div class="pipe-sub">Text extraction · All languages</div></div>
+        <div class="pipe-status done">Done</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-step" style="animation-delay:0.6s">
+        <div class="pipe-num">03</div>
+        <div class="pipe-info"><div class="pipe-title">Intent parsing</div><div class="pipe-sub">AI model · On-device</div></div>
+        <div class="pipe-status active">Running</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-step" style="animation-delay:0.8s">
+        <div class="pipe-num">04</div>
+        <div class="pipe-info"><div class="pipe-title">Entity extraction</div><div class="pipe-sub">Names · Prices · Dates · URLs</div></div>
+        <div class="pipe-status pending">Pending</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-step" style="animation-delay:1s">
+        <div class="pipe-num">05</div>
+        <div class="pipe-info"><div class="pipe-title">Auto-categorise</div><div class="pipe-sub">Routed to correct archive</div></div>
+        <div class="pipe-status pending">Pending</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-step" style="animation-delay:1.2s">
+        <div class="pipe-num">06</div>
+        <div class="pipe-info"><div class="pipe-title">Indexed for search</div><div class="pipe-sub">Plain-language retrieval ready</div></div>
+        <div class="pipe-status pending">Pending</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT READS -->
+<div class="reads-section">
+  <div class="section-label reveal">OCR + AI Parsing</div>
+  <h2 class="section-headline reveal rd1">It reads every<br/><em>pixel.</em></h2>
+  <p class="section-sub reveal rd2">Most apps treat a screenshot as an image. Snapwise treats it as a <strong>document waiting to be read</strong>. The OCR pass converts every visible character into structured text. The AI pass extracts meaning from that text.</p>
+
+  <div class="ocr-demo reveal">
+    <div class="ocr-left">
+      <div class="ocr-label">Input <span>Screenshot</span></div>
+      <div class="fake-ss">
+        <div class="fake-ss-header">
+          <div class="fss-dot" style="background:#ff5f57"></div>
+          <div class="fss-dot" style="background:#febc2e"></div>
+          <div class="fss-dot" style="background:#28c840"></div>
+        </div>
+        <div class="fake-ss-img"></div>
+        <div class="fake-ss-text">
+          <div class="fss-line highlighted" style="width:100%"></div>
+          <div class="fss-line" style="width:72%"></div>
+          <div class="fss-line highlighted" style="width:58%"></div>
+        </div>
+        <div class="fss-price-block">
+          <div style="position:relative;">
+            <div class="fss-price highlighted">$249</div>
+            <div class="fss-highlight-box"></div>
+          </div>
+          <div class="fss-price-label">Detected: Price entity<br/>Confidence: 99.2%</div>
+        </div>
+      </div>
+    </div>
+    <div class="ocr-right">
+      <div class="ocr-label">Output <span>Structured data</span></div>
+      <div class="ext-fields-list">
+        <div class="ext-field"><div><div class="ef-label">Product Name</div><div class="ef-val">Woven Accent Chair</div></div><div class="ef-confidence">99%</div></div>
+        <div class="ext-field"><div><div class="ef-label">Price</div><div class="ef-val">$249.00</div></div><div class="ef-confidence">99%</div></div>
+        <div class="ext-field"><div><div class="ef-label">Brand</div><div class="ef-val">Zara Home</div></div><div class="ef-confidence">97%</div></div>
+        <div class="ext-field"><div><div class="ef-label">Category</div><div class="ef-val">Buy Later → Furniture</div></div><div class="ef-confidence">96%</div></div>
+        <div class="ext-field"><div><div class="ef-label">Source URL</div><div class="ef-val">zarahome.com/chair-ref</div></div><div class="ef-confidence">94%</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capability cards -->
+  <div class="caps-grid">
+    <div class="cap-card reveal">
+      <div class="cap-icon">◎</div>
+      <div class="cap-title">Pixel-level OCR</div>
+      <p class="cap-body">Reads printed text, handwritten notes, UI text, code, and mixed-language content in a single pass. Accuracy holds above 99% across all major scripts.</p>
+    </div>
+    <div class="cap-card reveal rd1">
+      <div class="cap-icon">◈</div>
+      <div class="cap-title">Intent Classification</div>
+      <p class="cap-body">Beyond reading — the AI infers why you took the screenshot. Shopping intent, research intent, reference intent, travel planning. Each capture gets context.</p>
+    </div>
+    <div class="cap-card reveal rd2">
+      <div class="cap-icon">◇</div>
+      <div class="cap-title">Entity Extraction</div>
+      <p class="cap-body">Names, prices, dates, URLs, addresses, product codes, and people are all isolated into searchable fields. Every structured piece of data surfaced automatically.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ACCURACY -->
+<div class="accuracy-section">
+  <div class="acc-grid">
+    <div class="acc-left">
+      <div class="section-label reveal">Model performance</div>
+      <h2 class="section-headline reveal rd1">Numbers that<br/><em>matter.</em></h2>
+      <p class="section-sub reveal rd2" style="margin-bottom:0;">The model runs entirely on-device, yet performs at or above cloud-based alternatives. Because it only needs to understand what you capture — not everything.</p>
+    </div>
+    <div class="acc-right reveal rd2">
+      <div class="acc-meter-list" id="meters">
+        <div class="acc-meter-item">
+          <div class="acc-meter-label"><span class="acc-meter-name">Text OCR accuracy</span><span class="acc-meter-pct">99.1%</span></div>
+          <div class="acc-bar"><div class="acc-bar-fill" data-width="99.1"></div></div>
+        </div>
+        <div class="acc-meter-item">
+          <div class="acc-meter-label"><span class="acc-meter-name">Intent classification</span><span class="acc-meter-pct">96.4%</span></div>
+          <div class="acc-bar"><div class="acc-bar-fill" data-width="96.4"></div></div>
+        </div>
+        <div class="acc-meter-item">
+          <div class="acc-meter-label"><span class="acc-meter-name">Price entity detection</span><span class="acc-meter-pct">99.3%</span></div>
+          <div class="acc-bar"><div class="acc-bar-fill" data-width="99.3"></div></div>
+        </div>
+        <div class="acc-meter-item">
+          <div class="acc-meter-label"><span class="acc-meter-name">Date & time extraction</span><span class="acc-meter-pct">97.8%</span></div>
+          <div class="acc-bar"><div class="acc-bar-fill" data-width="97.8"></div></div>
+        </div>
+        <div class="acc-meter-item">
+          <div class="acc-meter-label"><span class="acc-meter-name">URL & link detection</span><span class="acc-meter-pct">98.6%</span></div>
+          <div class="acc-bar"><div class="acc-bar-fill" data-width="98.6"></div></div>
+        </div>
+        <div class="acc-meter-item">
+          <div class="acc-meter-label"><span class="acc-meter-name">Search relevance</span><span class="acc-meter-pct">94.2%</span></div>
+          <div class="acc-bar"><div class="acc-bar-fill" data-width="94.2"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY -->
+<div class="privacy-section">
+  <div class="priv-left">
+    <div class="section-label reveal">Privacy by design</div>
+    <h2 class="section-headline reveal rd1">Your captures.<br/><em>Your machine.</em><br/>Full stop.</h2>
+    <p class="section-sub reveal rd2" style="margin-bottom:0;">On-device AI is not a marketing claim. It is an architectural constraint we built the product around from day one. There is no pathway — even technically — for your data to leave your device.</p>
+  </div>
+  <div class="priv-right reveal rd2">
+    <div class="priv-principle">
+      <div class="pp-num">01</div>
+      <div><div class="pp-title">Zero network calls for processing</div><div class="pp-body">The AI model runs locally. Processing never makes an outbound request. Your images are not serialised, compressed, or transmitted anywhere.</div></div>
+    </div>
+    <div class="priv-principle">
+      <div class="pp-num">02</div>
+      <div><div class="pp-title">Local-first storage</div><div class="pp-body">All extracted data is stored in an encrypted local database on your machine. You own the database file. You can delete it, export it, or move it.</div></div>
+    </div>
+    <div class="priv-principle">
+      <div class="pp-num">03</div>
+      <div><div class="pp-title">No telemetry, no analytics</div><div class="pp-body">We do not track what you capture, what you search for, or what categories you use. Snapwise has no insight into your archive.</div></div>
+    </div>
+    <div class="priv-principle">
+      <div class="pp-num">04</div>
+      <div><div class="pp-title">Open to audit</div><div class="pp-body">The local AI model and storage layer are open to independent audit. If you want to verify the claims above, you can inspect the code yourself.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="cats-section">
+  <div class="cats-intro">
+    <div>
+      <div class="section-label reveal">Auto-categories</div>
+      <h2 class="section-headline reveal rd1">It knows where<br/>things <em>belong.</em></h2>
+    </div>
+    <p class="section-sub reveal rd2" style="margin-bottom:0;">16 built-in categories, trained on millions of real screenshot patterns. Each capture lands in the right place without a single tap from you. Add your own custom categories on Archivist and Studio plans.</p>
+  </div>
+  <div class="cats-grid">
+    <div class="cat-tile reveal"><div class="cat-tile-icon">🛒</div><div class="cat-tile-name">Buy Later</div><div class="cat-tile-desc">Products, prices, and wishlist items from any retailer.</div><div class="cat-tile-count">Most common</div></div>
+    <div class="cat-tile reveal rd1"><div class="cat-tile-icon">📺</div><div class="cat-tile-name">Watch List</div><div class="cat-tile-desc">Films, series, and video content with metadata extracted.</div><div class="cat-tile-count">Auto-tagged</div></div>
+    <div class="cat-tile reveal rd2"><div class="cat-tile-icon">✈️</div><div class="cat-tile-name">Travel</div><div class="cat-tile-desc">Flights, hotels, itineraries, and destination notes.</div><div class="cat-tile-count">Date-aware</div></div>
+    <div class="cat-tile reveal rd3"><div class="cat-tile-icon">💻</div><div class="cat-tile-name">Code</div><div class="cat-tile-desc">Snippets, error messages, docs, and Stack Overflow answers.</div><div class="cat-tile-count">Dev favourite</div></div>
+    <div class="cat-tile reveal"><div class="cat-tile-icon">💬</div><div class="cat-tile-name">Quotes</div><div class="cat-tile-desc">Text that stood out — from articles, books, or social posts.</div><div class="cat-tile-count">Searchable</div></div>
+    <div class="cat-tile reveal rd1"><div class="cat-tile-icon">🍽️</div><div class="cat-tile-name">Recipes</div><div class="cat-tile-desc">Ingredients and steps parsed and stored cleanly.</div><div class="cat-tile-count">Structured</div></div>
+    <div class="cat-tile reveal rd2"><div class="cat-tile-icon">📐</div><div class="cat-tile-name">Design Ref</div><div class="cat-tile-desc">Palettes, layouts, typography, and UI patterns.</div><div class="cat-tile-count">Visual index</div></div>
+    <div class="cat-tile reveal rd3"><div class="cat-tile-icon">📋</div><div class="cat-tile-name">Research</div><div class="cat-tile-desc">Articles, data, and reference material captured for later.</div><div class="cat-tile-count">Deep search</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand-name">Snapwise</span>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Snapwise · All rights reserved</span>
+    <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
+    <span class="footer-copy">On-device AI · Zero cloud</span>
+  </div>
+</footer>
+
+<script>
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function t(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cur.style.left=mx+'px';cur.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(t);})();
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40),{passive:true});
+
+// Pipeline animation on load
+setTimeout(()=>{
+  document.querySelectorAll('.pipeline-step').forEach((s,i)=>{
+    setTimeout(()=>{
+      s.style.opacity='1';s.style.transform='translateX(0)';
+      s.style.transition='opacity 0.5s,transform 0.5s cubic-bezier(0.16,1,0.3,1)';
+    },i*200);
+  });
+},400);
+
+// Reveal
+const obs=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){
+    e.target.classList.add('visible');
+    // Trigger accuracy bars
+    const bars=e.target.querySelectorAll('.acc-bar-fill');
+    bars.forEach(b=>{setTimeout(()=>{b.style.width=b.dataset.width+'%';},200);});
+    obs.unobserve(e.target);
+  }
+}),{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+// Also trigger bars when the meter section enters view
+const meterObs=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){
+    document.querySelectorAll('.acc-bar-fill').forEach((b,i)=>{
+      setTimeout(()=>{b.style.width=b.dataset.width+'%';},i*150+200);
+    });
+    meterObs.unobserve(e.target);
+  }
+}),{threshold:0.3});
+const meters=document.getElementById('meters');
+if(meters)meterObs.observe(meters);
+</script>
+</body>
+</html>

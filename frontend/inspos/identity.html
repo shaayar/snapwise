@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Brand Brief — Motif</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #0A0A0A;
+    --ink-soft: #141414;
+    --ivory: #F0EBE1;
+    --ivory-dim: #9A9080;
+    --ivory-muted: #3A342C;
+    --gold: #B8924A;
+    --gold-dim: #7A5F30;
+    --rule: rgba(240,235,225,0.08);
+    --rule-gold: rgba(184,146,74,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    background: var(--ink);
+    color: var(--ivory);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 48px 120px;
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .doc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .doc-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ivory-dim);
+    text-align: right;
+    line-height: 2;
+  }
+
+  .cover-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 100px 0;
+  }
+
+  .cover-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 40px;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(100px, 16vw, 180px);
+    font-weight: 300;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    color: var(--ivory);
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cover-subtitle {
+    margin-top: 48px;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--ivory-dim);
+    letter-spacing: 0.05em;
+    max-width: 420px;
+    line-height: 1.8;
+    border-left: 1px solid var(--gold-dim);
+    padding-left: 24px;
+  }
+
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .cover-tagline-block {
+    max-width: 320px;
+  }
+
+  .cover-tagline-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+    margin-bottom: 10px;
+  }
+
+  .cover-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ivory);
+    line-height: 1.4;
+  }
+
+  .cover-index {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+    text-align: right;
+    line-height: 2.2;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 100px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: baseline;
+  }
+
+  .section-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-top: 6px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ivory);
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .section-body {
+    padding-left: 208px;
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  p {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--ivory-dim);
+    max-width: 620px;
+  }
+
+  p + p { margin-top: 24px; }
+
+  strong { color: var(--ivory); font-weight: 500; }
+
+  /* ─── NAMES GRID ─── */
+  .names-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 60px;
+  }
+
+  .name-card {
+    background: var(--ink-soft);
+    padding: 40px 32px;
+    border: 1px solid var(--rule);
+    position: relative;
+    transition: border-color 0.4s;
+  }
+
+  .name-card:hover { border-color: var(--rule-gold); }
+
+  .name-card.recommended {
+    border-color: var(--gold-dim);
+    background: #111008;
+  }
+
+  .name-card .rec-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .name-card .name-word {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--ivory);
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .name-card.recommended .name-word {
+    color: var(--gold);
+  }
+
+  .name-card .name-origin {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+    margin-bottom: 20px;
+  }
+
+  .name-card .name-desc {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--ivory-dim);
+    max-width: none;
+  }
+
+  /* ─── POSITIONING STATEMENT ─── */
+  .positioning-block {
+    border: 1px solid var(--rule-gold);
+    padding: 56px;
+    position: relative;
+    margin-bottom: 48px;
+    background: #0F0C06;
+  }
+
+  .positioning-block::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 160px;
+    color: var(--gold);
+    opacity: 0.08;
+    position: absolute;
+    top: -20px;
+    left: 32px;
+    line-height: 1;
+  }
+
+  .positioning-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ivory);
+    max-width: 660px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── PILLARS ─── */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  .pillar {
+    background: var(--ink-soft);
+    padding: 40px 36px;
+    border: 1px solid var(--rule);
+  }
+
+  .pillar-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .pillar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--ivory);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .pillar-body {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--ivory-dim);
+    max-width: none;
+  }
+
+  /* ─── COLOR PALETTE ─── */
+  .palette-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    margin-bottom: 40px;
+  }
+
+  .swatch {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    border: 1px solid var(--rule);
+  }
+
+  .swatch-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .swatch-hex {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+
+  /* ─── TYPOGRAPHY SPECIMEN ─── */
+  .type-specimen {
+    border: 1px solid var(--rule);
+    padding: 56px;
+    margin-bottom: 4px;
+    background: var(--ink-soft);
+  }
+
+  .type-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .type-row:last-child { border-bottom: none; }
+
+  .type-sample-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--ivory);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .type-sample-ui {
+    font-family: 'Jost', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--ivory);
+    letter-spacing: 0.02em;
+  }
+
+  .type-sample-mono {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .type-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+    text-align: right;
+  }
+
+  /* ─── VOICE TABLE ─── */
+  .voice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 48px;
+  }
+
+  .voice-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: left;
+    padding: 0 0 20px;
+    border-bottom: 1px solid var(--rule-gold);
+    font-weight: 400;
+  }
+
+  .voice-table td {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  .voice-table td:first-child {
+    width: 30%;
+    padding-right: 40px;
+  }
+
+  .voice-attr {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ivory);
+  }
+
+  .voice-do {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ivory-dim);
+    line-height: 1.7;
+    max-width: none;
+  }
+
+  .voice-not {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ivory-muted);
+    line-height: 1.7;
+    text-decoration: line-through;
+    text-decoration-color: var(--gold-dim);
+    max-width: none;
+  }
+
+  /* ─── TAGLINES ─── */
+  .taglines-list {
+    list-style: none;
+    margin-bottom: 48px;
+  }
+
+  .taglines-list li {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    cursor: default;
+    transition: border-color 0.3s;
+  }
+
+  .taglines-list li:hover { border-color: var(--rule-gold); }
+
+  .tagline-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ivory);
+    line-height: 1.2;
+  }
+
+  .tagline-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+    text-align: right;
+    flex-shrink: 0;
+    max-width: 180px;
+    line-height: 1.8;
+  }
+
+  /* ─── LOGO CONCEPT ─── */
+  .logo-showcase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  .logo-panel {
+    padding: 64px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    border: 1px solid var(--rule);
+    min-height: 220px;
+  }
+
+  .logo-panel.dark { background: #0A0A0A; }
+  .logo-panel.light { background: var(--ivory); }
+  .logo-panel.gold { background: var(--gold); }
+
+  .logo-lockup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-mark svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .logo-wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .logo-caption {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-top: 32px;
+  }
+
+  .logo-panel.dark .logo-wordmark { color: var(--ivory); }
+  .logo-panel.dark .logo-caption { color: var(--ivory-muted); }
+  .logo-panel.light .logo-wordmark { color: #0A0A0A; }
+  .logo-panel.light .logo-caption { color: #9A9080; }
+  .logo-panel.gold .logo-wordmark { color: #0A0A0A; }
+  .logo-panel.gold .logo-caption { color: rgba(10,10,10,0.5); }
+
+  /* ─── AUDIENCE ─── */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  .persona-card {
+    background: var(--ink-soft);
+    border: 1px solid var(--rule);
+    padding: 36px 32px;
+  }
+
+  .persona-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .persona-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ivory);
+    margin-bottom: 16px;
+  }
+
+  .persona-desc {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--ivory-dim);
+    max-width: none;
+    margin-bottom: 20px;
+  }
+
+  .persona-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ivory-muted);
+    line-height: 1.6;
+    border-top: 1px solid var(--rule);
+    padding-top: 16px;
+  }
+
+  /* ─── DIVIDER ─── */
+  .rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 0;
+  }
+
+  /* ─── PAGE NUMBER ─── */
+  .pg {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    color: var(--ivory-muted);
+    text-align: right;
+    padding: 24px 0;
+  }
+
+  /* ─── CLOSING ─── */
+  .closing {
+    padding: 120px 0 60px;
+    text-align: center;
+  }
+
+  .closing-word {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(60px, 10vw, 120px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ivory);
+    opacity: 0.12;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    display: block;
+    margin-bottom: 48px;
+  }
+
+  .closing-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+    line-height: 2.5;
+  }
+
+  /* ─── INSET TEXT ─── */
+  .inset-note {
+    background: var(--ink-soft);
+    border-left: 2px solid var(--gold);
+    padding: 20px 28px;
+    margin-top: 32px;
+    margin-bottom: 0;
+  }
+
+  .inset-note p {
+    font-size: 13px;
+    color: var(--ivory-dim);
+    max-width: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     COVER
+══════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-top">
+    <span class="doc-label">Brand Identity Brief / Rev.01</span>
+    <div class="doc-meta">
+      Prepared 2025<br/>
+      Confidential<br/>
+      For Internal Use
+    </div>
+  </div>
+
+  <div class="cover-main">
+    <div class="cover-eyebrow">Proposed Brand Identity</div>
+    <h1 class="cover-title">Mo<em>tif</em></h1>
+    <p class="cover-subtitle">
+      A complete brand framework for a screenshot intelligence platform — positioning, naming, visual identity, voice, and application guidelines.
+    </p>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-tagline-block">
+      <div class="cover-tagline-label">Primary Tagline Candidate</div>
+      <div class="cover-tagline">Everything you save, finally means something.</div>
+    </div>
+    <div class="cover-index">
+      01 — Naming<br/>
+      02 — Positioning<br/>
+      03 — Audience<br/>
+      04 — Visual Identity<br/>
+      05 — Voice & Tone<br/>
+      06 — Taglines
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     01 — NAMING
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">01 — Naming</div>
+    <h2 class="section-title">What to call <em>it.</em></h2>
+  </div>
+  <div class="section-body">
+    <p>Three names were developed. Each reflects the same product truth from a different angle. The recommendation is <strong>Motif</strong> — but all three are defensible depending on the direction you want to take the brand.</p>
+  </div>
+</div>
+
+<div class="names-grid" style="padding: 0 0 0 208px;">
+  <div class="name-card recommended">
+    <span class="rec-badge">★ Recommended</span>
+    <div class="name-word">Motif</div>
+    <div class="name-origin">Fr. — a recurring significant pattern</div>
+    <p class="name-desc">Your screenshots are not random. Over time, they reveal what you return to — a recurring subject, a collecting instinct, a pattern of attention. Motif names that insight. It's design-adjacent, editorial, phonetically clean, and has no tech-product baggage.</p>
+  </div>
+  <div class="name-card">
+    <span class="rec-badge" style="opacity:0">–</span>
+    <div class="name-word">Folio</div>
+    <div class="name-origin">Lat. — a leaf of paper; a collected work</div>
+    <p class="name-desc">Editorial and archival. Implies a curated body of work rather than a utility tool. Works well if the product leans into the "personal library" metaphor. Risk: slightly passive — a folio is where things go, not where intelligence acts on them.</p>
+  </div>
+  <div class="name-card">
+    <span class="rec-badge" style="opacity:0">–</span>
+    <div class="name-word">Lume</div>
+    <div class="name-origin">Lat. — light; to illuminate</div>
+    <p class="name-desc">Implies that your captures are brought into clarity — things that were dark become visible. Clean, short, distinctive, easy to say. Slight risk: overlaps with existing cosmetic/lighting brands. Best if the product focuses on retrieval and "finding" things.</p>
+  </div>
+</div>
+
+<div class="inset-note" style="margin: 0 0 0 208px;">
+  <p><strong>On domain & handles:</strong> motif.app, motif.so, getmotif.com are worth checking. The word is common in design circles which creates brand-fit but also competition for handles. Consider a subdomain strategy like <strong>usemotif.com</strong>.</p>
+</div>
+
+<div class="pg">01 / 08</div>
+
+<!-- ══════════════════════════════════════════
+     02 — POSITIONING
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">02 — Positioning</div>
+    <h2 class="section-title">What it <em>stands for.</em></h2>
+  </div>
+  <div class="section-body">
+    <p>Motif is not a productivity app. It is not a note-taking tool. It is not a bookmark manager. It is an <strong>intelligence layer</strong> for the things you found worth capturing — and the people who find more things worth capturing than they can possibly act on.</p>
+  </div>
+</div>
+
+<div class="positioning-block" style="margin: 0 0 0 208px;">
+  <p class="positioning-text">
+    "Motif is the editorial layer between what you notice and what you do about it."
+  </p>
+</div>
+
+<div style="padding: 0 0 0 208px; margin-top: 4px;">
+  <p>Most screenshot apps treat captures as files. Motif treats them as <strong>signals</strong>. The distinction matters: a file is passive storage. A signal is active data — something to be read, decoded, and acted on. Motif reads the signal so you don't have to.</p>
+  <p style="margin-top: 24px;">The product lives in the gap between high-intent capture (you saw something worth saving) and the follow-through that rarely happens (finding it again, acting on it). Motif closes that gap with zero friction.</p>
+</div>
+
+<div style="padding: 48px 0 0 208px;">
+  <div class="section-number" style="margin-bottom: 32px;">Brand Pillars</div>
+  <div class="pillars-grid">
+    <div class="pillar">
+      <span class="pillar-number">01</span>
+      <div class="pillar-title">Intentional by design</div>
+      <p class="pillar-body">Motif is built for people who capture with purpose. It does not try to organize chaos — it elevates signal. The experience reflects that: deliberate, unhurried, precise.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-number">02</span>
+      <div class="pillar-title">Intelligence without friction</div>
+      <p class="pillar-body">The AI should be invisible. No prompting, no configuration, no learning curve. You capture. It understands. The less the user has to think about the tool, the more they can think about the work.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-number">03</span>
+      <div class="pillar-title">Privacy as a premise, not a feature</div>
+      <p class="pillar-body">On-device processing is not marketed as a checkbox. It is the foundational philosophy: your captures are yours, your patterns belong to you, and no cloud ever sees them.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-number">04</span>
+      <div class="pillar-title">Curation over accumulation</div>
+      <p class="pillar-body">Motif does not want you to save everything. It wants you to find what matters in what you saved. The bias is always toward meaning over volume, toward recall over storage.</p>
+    </div>
+  </div>
+</div>
+
+<div class="pg">02 / 08</div>
+
+<!-- ══════════════════════════════════════════
+     03 — AUDIENCE
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">03 — Audience</div>
+    <h2 class="section-title">Who it's <em>for.</em></h2>
+  </div>
+  <div class="section-body">
+    <p>Motif has a broad use case but a narrow psychographic. The technology works for anyone — the brand speaks to a specific kind of person: someone who notices things, saves them with intention, and is frustrated that intention rarely becomes action.</p>
+  </div>
+</div>
+
+<div style="padding: 0 0 0 208px;">
+  <div class="persona-grid">
+    <div class="persona-card">
+      <span class="persona-role">Primary</span>
+      <div class="persona-name">The Designer / Creative</div>
+      <p class="persona-desc">Screenshots are a core research tool — references, palettes, UI patterns, editorial layouts. They accumulate hundreds per week with no coherent retrieval system. Motif becomes their research library.</p>
+      <p class="persona-quote">"I know I saved that font pairing somewhere. It was from a magazine redesign I screenshotted in 2022."</p>
+    </div>
+    <div class="persona-card">
+      <span class="persona-role">Primary</span>
+      <div class="persona-name">The Developer</div>
+      <p class="persona-desc">Captures error logs, Stack Overflow answers, API docs, UI components. The pain is retrieval: finding that one screenshot with the exact code snippet three months later. Motif parses the code and links out.</p>
+      <p class="persona-quote">"I screenshot that Tailwind trick but I have 4000 screenshots and no idea which folder it's in."</p>
+    </div>
+    <div class="persona-card">
+      <span class="persona-role">Secondary</span>
+      <div class="persona-name">The Knowledge Worker</div>
+      <p class="persona-desc">Articles, research threads, prices, flight details, quotes from books. Screenshots are a second brain that never gets reviewed. Motif surfaces them at the right moment, automatically categorized.</p>
+      <p class="persona-quote">"I save everything. I use none of it. I don't even know where to start."</p>
+    </div>
+  </div>
+
+  <div class="inset-note">
+    <p><strong>Positioning nuance:</strong> The brand should feel like it was built for the designer/creative first — that's the aspirational user that elevates perceived quality. Devs and knowledge workers will follow when they see the precision. Don't lead with developer messaging even if the OCR feature is highly relevant to them.</p>
+  </div>
+</div>
+
+<div class="pg">03 / 08</div>
+
+<!-- ══════════════════════════════════════════
+     04 — VISUAL IDENTITY
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">04 — Visual Identity</div>
+    <h2 class="section-title">How it <em>looks.</em></h2>
+  </div>
+  <div class="section-body">
+    <p>The visual language is <strong>quiet luxury editorial</strong>. This means restraint over decoration, precision over expressiveness, and whitespace as an active element. Think Kinfolk magazine meets a bespoke software interface. Nothing shouts. Everything means something.</p>
+  </div>
+</div>
+
+<!-- LOGO -->
+<div style="padding: 0 0 0 208px; margin-bottom: 8px;">
+  <div class="section-number" style="margin-bottom: 32px;">Logo Concept</div>
+  <div class="logo-showcase">
+    <div class="logo-panel dark">
+      <div class="logo-lockup">
+        <div class="logo-mark">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="13" height="13" stroke="#B8924A" stroke-width="1"/>
+            <rect x="17" y="2" width="13" height="13" stroke="#F0EBE1" stroke-width="1" opacity="0.3"/>
+            <rect x="2" y="17" width="13" height="13" stroke="#F0EBE1" stroke-width="1" opacity="0.3"/>
+            <rect x="17" y="17" width="13" height="13" stroke="#B8924A" stroke-width="1" opacity="0.5"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">Motif</span>
+      </div>
+      <div class="logo-caption">Dark / Primary</div>
+    </div>
+    <div class="logo-panel light">
+      <div class="logo-lockup">
+        <div class="logo-mark">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="13" height="13" stroke="#0A0A0A" stroke-width="1"/>
+            <rect x="17" y="2" width="13" height="13" stroke="#0A0A0A" stroke-width="1" opacity="0.3"/>
+            <rect x="2" y="17" width="13" height="13" stroke="#0A0A0A" stroke-width="1" opacity="0.3"/>
+            <rect x="17" y="17" width="13" height="13" stroke="#0A0A0A" stroke-width="1" opacity="0.5"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">Motif</span>
+      </div>
+      <div class="logo-caption">Light / Reversed</div>
+    </div>
+    <div class="logo-panel" style="background:#111; border:1px solid var(--rule-gold);">
+      <div class="logo-lockup">
+        <div class="logo-mark" style="width:48px; height:48px;">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="13" height="13" stroke="#B8924A" stroke-width="1.5"/>
+            <rect x="17" y="2" width="13" height="13" stroke="#B8924A" stroke-width="1.5" opacity="0.4"/>
+            <rect x="2" y="17" width="13" height="13" stroke="#B8924A" stroke-width="1.5" opacity="0.4"/>
+            <rect x="17" y="17" width="13" height="13" stroke="#B8924A" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+      <div class="logo-caption" style="color: var(--ivory-muted);">Mark / Icon Only</div>
+    </div>
+    <div class="logo-panel gold">
+      <div class="logo-lockup">
+        <div class="logo-mark">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="13" height="13" stroke="#0A0A0A" stroke-width="1"/>
+            <rect x="17" y="2" width="13" height="13" stroke="#0A0A0A" stroke-width="1" opacity="0.4"/>
+            <rect x="2" y="17" width="13" height="13" stroke="#0A0A0A" stroke-width="1" opacity="0.4"/>
+            <rect x="17" y="17" width="13" height="13" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">Motif</span>
+      </div>
+      <div class="logo-caption">Amber / Highlight use</div>
+    </div>
+  </div>
+  <p style="font-size:12px; color: var(--ivory-muted); font-family: 'DM Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 8px;">
+    The mark is four quadrant squares — a visual echo of a screenshot grid. Varying opacity creates the sense of some squares being "active" (highlighted, found, surfaced) and others receding. The wordmark uses Cormorant Garamond in a clean roman cut — familiar but not generic.
+  </p>
+</div>
+
+<!-- PALETTE -->
+<div style="padding: 48px 0 0 208px;">
+  <div class="section-number" style="margin-bottom: 32px;">Colour Palette</div>
+  <div class="palette-row">
+    <div class="swatch" style="background:#0A0A0A; aspect-ratio:auto; height:180px;">
+      <span class="swatch-name" style="color:#F0EBE1">Ink</span>
+      <span class="swatch-hex" style="color:#F0EBE1">#0A0A0A</span>
+    </div>
+    <div class="swatch" style="background:#F0EBE1; aspect-ratio:auto; height:180px; border-color:rgba(10,10,10,0.1);">
+      <span class="swatch-name" style="color:#0A0A0A">Ivory</span>
+      <span class="swatch-hex" style="color:#0A0A0A">#F0EBE1</span>
+    </div>
+    <div class="swatch" style="background:#B8924A; aspect-ratio:auto; height:180px;">
+      <span class="swatch-name" style="color:#0A0A0A">Amber</span>
+      <span class="swatch-hex" style="color:#0A0A0A">#B8924A</span>
+    </div>
+    <div class="swatch" style="background:#1C1C1C; aspect-ratio:auto; height:180px;">
+      <span class="swatch-name" style="color:#9A9080">Surface</span>
+      <span class="swatch-hex" style="color:#9A9080">#1C1C1C</span>
+    </div>
+    <div class="swatch" style="background:#3A342C; aspect-ratio:auto; height:180px;">
+      <span class="swatch-name" style="color:#9A9080">Dim</span>
+      <span class="swatch-hex" style="color:#9A9080">#3A342C</span>
+    </div>
+  </div>
+  <p style="font-size:12px; color: var(--ivory-muted); font-family: 'DM Mono', monospace; letter-spacing: 0.1em;">
+    Amber is used sparingly — for interactive states, labels, and the logo mark on dark. Never as a fill for large areas. It should feel like a detail, not a theme.
+  </p>
+</div>
+
+<!-- TYPOGRAPHY -->
+<div style="padding: 48px 0 0 208px;">
+  <div class="section-number" style="margin-bottom: 32px;">Typography System</div>
+  <div class="type-specimen">
+    <div class="type-row">
+      <div class="type-sample-display">Cormorant Garamond</div>
+      <div class="type-meta">Display<br/>Headlines / Hero<br/>Light & Italic cuts</div>
+    </div>
+    <div class="type-row">
+      <div class="type-sample-ui">Jost — The UI workhorse.</div>
+      <div class="type-meta">UI Sans<br/>Body / Navigation<br/>Weight 300–500</div>
+    </div>
+    <div class="type-row">
+      <div class="type-sample-mono">DM Mono — Labels / Metadata / Code</div>
+      <div class="type-meta">Monospace<br/>Captions / Tags<br/>Uppercase with tracking</div>
+    </div>
+  </div>
+</div>
+
+<div class="pg">04 / 08</div>
+
+<!-- ══════════════════════════════════════════
+     05 — VOICE & TONE
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">05 — Voice & Tone</div>
+    <h2 class="section-title">How it <em>speaks.</em></h2>
+  </div>
+  <div class="section-body">
+    <p>Motif does not hype. It does not over-explain. It communicates with the confidence of something that knows exactly what it is — and respects that the user also knows what they're looking for. Think <strong>editor, not salesperson</strong>.</p>
+  </div>
+</div>
+
+<div style="padding: 0 0 0 208px;">
+  <table class="voice-table">
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th>Write like this</th>
+        <th>Not like this</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="voice-attr">Precise</div></td>
+        <td><p class="voice-do">Pixel-level OCR. Instant extraction. No training required.</p></td>
+        <td><p class="voice-not">Our powerful AI technology automatically processes all of your screenshots with incredible accuracy!</p></td>
+      </tr>
+      <tr>
+        <td><div class="voice-attr">Understated</div></td>
+        <td><p class="voice-do">Everything you save, finally means something.</p></td>
+        <td><p class="voice-not">The revolutionary AI-powered screenshot manager that will transform your workflow forever.</p></td>
+      </tr>
+      <tr>
+        <td><div class="voice-attr">Dry wit</div></td>
+        <td><p class="voice-do">Your screenshot folder: 4,832 images. Items you've returned to: 9.</p></td>
+        <td><p class="voice-not">We know managing your screenshots can be a challenge. That's why we built Motif to help!</p></td>
+      </tr>
+      <tr>
+        <td><div class="voice-attr">Earned confidence</div></td>
+        <td><p class="voice-do">The archive does the thinking. You do the making.</p></td>
+        <td><p class="voice-not">We believe that everyone deserves a smarter way to organize their digital life.</p></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pg">05 / 08</div>
+
+<!-- ══════════════════════════════════════════
+     06 — TAGLINES
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">06 — Taglines</div>
+    <h2 class="section-title">What it <em>says.</em></h2>
+  </div>
+  <div class="section-body">
+    <p>Eight candidate taglines, ranging from functional to poetic. They can serve different contexts — hero copy, app store descriptions, social bios, and press.</p>
+  </div>
+</div>
+
+<div style="padding: 0 0 0 208px;">
+  <ul class="taglines-list">
+    <li>
+      <span class="tagline-text">Everything you save, finally means something.</span>
+      <span class="tagline-note">★ Primary<br/>Emotional / universal</span>
+    </li>
+    <li>
+      <span class="tagline-text">The archive does the thinking.</span>
+      <span class="tagline-note">Product-led<br/>AI confidence</span>
+    </li>
+    <li>
+      <span class="tagline-text">Your screenshots, read.</span>
+      <span class="tagline-note">Minimalist<br/>Double meaning (OCR + understood)</span>
+    </li>
+    <li>
+      <span class="tagline-text">Capture once. Understand always.</span>
+      <span class="tagline-note">Functional<br/>Good for App Store</span>
+    </li>
+    <li>
+      <span class="tagline-text">The intelligence behind your instincts.</span>
+      <span class="tagline-note">Brand-level<br/>Aspirational</span>
+    </li>
+    <li>
+      <span class="tagline-text">Signal from noise. Yours, always.</span>
+      <span class="tagline-note">Privacy-forward<br/>Tech-leaning audience</span>
+    </li>
+    <li>
+      <span class="tagline-text">You noticed it. We'll remember it.</span>
+      <span class="tagline-note">Warm / collaborative<br/>Consumer-facing</span>
+    </li>
+    <li>
+      <span class="tagline-text">A second brain that learned to read.</span>
+      <span class="tagline-note">Concept-led<br/>Dev / power user</span>
+    </li>
+  </ul>
+</div>
+
+<div class="pg">06 / 08</div>
+
+<!-- ══════════════════════════════════════════
+     CLOSING
+══════════════════════════════════════════ -->
+<div class="closing">
+  <span class="closing-word">Pattern.</span>
+  <div class="closing-meta">
+    Motif — Brand Identity Brief / Rev.01<br/>
+    Naming · Positioning · Audience · Visual Identity · Voice · Taglines<br/>
+    ——<br/>
+    All concepts preliminary and subject to revision.<br/>
+    Next step: name validation, visual exploration, design system build.
+  </div>
+</div>
+
+</body>
+</html>

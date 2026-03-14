@@ -1,0 +1,36 @@
+Got it. The identity file confirms the palette we designed together. Here's the exact mapping — every variable you need to swap across all four files:
+
+---
+
+## The Token Swap
+
+| Current (purple system) | Replace with | Identity name |
+|---|---|---|
+| `--bg: #04020A` | `--bg: #0A0A0A` | Ink |
+| `--bg2: #07040F` | `--bg2: #111008` | Ink warm |
+| `--surface: #0C0716` | `--surface: #141414` | Ink Soft |
+| `--primary: #7F0DF2` | `--primary: #B8924A` | Amber |
+| `--primary-b: #5A08B0` | `--primary-b: #7A5F30` | Gold Dim |
+| `--primary-d: rgba(127,13,242,0.12)` | `--primary-d: rgba(184,146,74,0.12)` | Amber wash |
+| `--primary-g: rgba(127,13,242,0.06)` | `--primary-g: rgba(184,146,74,0.06)` | Amber glow |
+| `--border: rgba(127,13,242,0.2)` | `--border: rgba(184,146,74,0.25)` | rule-gold |
+| `--border-s: rgba(255,255,255,0.05)` | `--border-s: rgba(240,235,225,0.08)` | rule |
+| `--text: #EDE8F5` | `--text: #F0EBE1` | Ivory |
+| `--muted: #7A6E8A` | `--muted: #9A9080` | Ivory Dim |
+| `--dim: #2A2235` | `--dim: #3A342C` | Ivory Muted |
+
+---
+
+## Two things to fix beyond the variables
+
+**1. Anywhere you have hardcoded purple hex values** — search all files for `#7F0DF2`, `#7f0df2`, `127,13,242` and replace with `#B8924A` / `184,146,74`.
+
+**2. The nav mark squares** — currently they use `background: var(--primary)` which will now render amber. That's correct and intentional per the identity. The logo SVG in the brand brief uses `stroke="#B8924A"` for the active squares — that'll now match automatically once you swap the variable.
+
+---
+
+## One design note
+
+The orb glows, grain texture, and scroll-driven glow effects throughout the LP all reference `rgba(127,13,242,...)`. Once swapped to amber (`rgba(184,146,74,...)`), the atmosphere shifts significantly — from electric/dark to warm/archival. The grid lines, hero glow, and privacy orb will all read gold instead of purple. Make sure that's the direction you're committing to before applying globally, because it's a fundamentally different mood.
+
+If you want I can apply all of these swaps to all four files and output updated versions — just say the word.

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Snapwise — Preloader H: Particle Collapse</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Jost:wght@200;300;400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#04020A;
+  --primary:#7F0DF2;
+  --text:#EDE8F5;
+  --muted:#7A6E8A;
+  --dim:#2A2235;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Jost',sans-serif;color:var(--text);}
+
+#preloader{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);
+}
+
+/* Canvas for particles */
+#particle-canvas{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+}
+
+/* The final assembled mark — hidden until collapse complete */
+#final-mark{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  opacity:0;
+  z-index:10;
+  pointer-events:none;
+}
+.fm-grid{
+  width:52px;height:52px;
+  display:grid;grid-template-columns:1fr 1fr;gap:4px;
+}
+.fm-sq{
+  display:block;
+  background:var(--primary);
+  box-shadow:0 0 12px rgba(127,13,242,0.6);
+}
+.fm-sq:nth-child(2),.fm-sq:nth-child(3){
+  opacity:0.3;
+}
+.fm-word{
+  font-family:'DM Mono',monospace;
+  font-size:12px;letter-spacing:0.35em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ── HERO ── */
+#hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  padding:120px 40px;
+  overflow:hidden;
+  opacity:0;
+}
+.hero-orb{
+  position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px);
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(127,13,242,0.2) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-60%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(127,13,242,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(127,13,242,0.04) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent);
+}
+.h-eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:0.4em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:28px;
+  display:flex;align-items:center;gap:16px;
+  opacity:0;transform:translateY(20px);
+  transition:all 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+.h-eyebrow::before,.h-eyebrow::after{content:'';width:32px;height:1px;background:var(--primary);opacity:0.5;}
+.h-hl{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(64px,10vw,140px);
+  font-weight:300;line-height:0.92;letter-spacing:-0.02em;
+  margin-bottom:32px;
+  opacity:0;transform:translateY(32px);
+  transition:all 1s 0.1s cubic-bezier(0.16,1,0.3,1);
+}
+.h-hl em{color:var(--primary);font-style:italic;}
+.h-sub{
+  font-size:18px;font-weight:300;color:var(--muted);
+  max-width:480px;line-height:1.85;margin-bottom:48px;
+  opacity:0;transform:translateY(24px);
+  transition:all 0.9s 0.2s cubic-bezier(0.16,1,0.3,1);
+}
+.h-btn{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:0.25em;text-transform:uppercase;
+  background:var(--primary);color:#fff;border:none;
+  padding:16px 48px;cursor:pointer;
+  box-shadow:0 0 32px rgba(127,13,242,0.35);
+  opacity:0;transform:translateY(16px);
+  transition:all 0.8s 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+#hero.open .h-eyebrow,
+#hero.open .h-hl,
+#hero.open .h-sub,
+#hero.open .h-btn{opacity:1;transform:translateY(0);}
+
+#grain{
+  position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+</style>
+</head>
+<body>
+<div id="grain"></div>
+
+<div id="preloader">
+  <canvas id="particle-canvas"></canvas>
+  <div id="final-mark">
+    <div class="fm-grid">
+      <span class="fm-sq"></span><span class="fm-sq"></span>
+      <span class="fm-sq"></span><span class="fm-sq"></span>
+    </div>
+    <div class="fm-word">Snapwise</div>
+  </div>
+</div>
+
+<div id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orb"></div>
+  <div class="h-eyebrow">Screenshot Intelligence</div>
+  <h1 class="h-hl">Your saves,<br/>finally <em>read.</em></h1>
+  <p class="h-sub">Snapwise extracts meaning from every screenshot — automatically sorted, permanently retrievable, entirely yours.</p>
+  <button class="h-btn">Start Organizing</button>
+</div>
+
+<script>
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width  = window.innerWidth;
+const H = canvas.height = window.innerHeight;
+const cx = W / 2;
+const cy = H / 2;
+
+// ── LOGO MARK GEOMETRY ──
+// The mark is a 2x2 grid of squares, 52x52px total, centered on screen
+// We define target positions for each particle relative to mark center
+const MARK_SIZE = 52; // total mark size
+const GAP       = 4;
+const SQ        = (MARK_SIZE - GAP) / 2; // ~24px per square
+
+// Target positions: centers of each of the 4 squares
+// Squares: [top-left, top-right, bottom-left, bottom-right]
+function getTargets() {
+  const offsets = [
+    { x: -SQ/2 - GAP/2, y: -SQ/2 - GAP/2 }, // top-left
+    { x:  SQ/2 + GAP/2, y: -SQ/2 - GAP/2 }, // top-right
+    { x: -SQ/2 - GAP/2, y:  SQ/2 + GAP/2 }, // bottom-left
+    { x:  SQ/2 + GAP/2, y:  SQ/2 + GAP/2 }, // bottom-right
+  ];
+  return offsets.map(o => ({ x: cx + o.x, y: cy + o.y }));
+}
+
+// ── PARTICLE SYSTEM ──
+// ~160 particles per square = 640 total
+const PARTICLES_PER_SQ = 160;
+const NUM_SQUARES = 4;
+const targets = getTargets();
+
+// Square opacity weights (matches CSS: sq1=full, sq2=0.3, sq3=0.3, sq4=full)
+const SQ_OPACITIES = [1, 0.3, 0.3, 1];
+
+const particles = [];
+
+for (let sq = 0; sq < NUM_SQUARES; sq++) {
+  const t = targets[sq];
+  const baseOpacity = SQ_OPACITIES[sq];
+
+  for (let i = 0; i < PARTICLES_PER_SQ; i++) {
+    // Scatter position: random across viewport with bias toward edges
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 180 + Math.random() * Math.min(W, H) * 0.38;
+    const scatter = {
+      x: cx + Math.cos(angle) * radius + (Math.random() - 0.5) * 200,
+      y: cy + Math.sin(angle) * radius + (Math.random() - 0.5) * 200,
+    };
+
+    // Target: random point inside its square
+    const target = {
+      x: t.x + (Math.random() - 0.5) * SQ,
+      y: t.y + (Math.random() - 0.5) * SQ,
+    };
+
+    particles.push({
+      // Current position (starts at scatter)
+      x: scatter.x,
+      y: scatter.y,
+      // Start position
+      sx: scatter.x,
+      sy: scatter.y,
+      // End position (in mark)
+      tx: target.x,
+      ty: target.y,
+      // Visual
+      size: 0.8 + Math.random() * 1.2,
+      opacity: 0,
+      baseOpacity: baseOpacity,
+      // Animation
+      delay: 0.1 + Math.random() * 0.6, // stagger
+      sq: sq,
+    });
+  }
+}
+
+// ── EASING ──
+function easeInOutCubic(t){
+  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+}
+function easeOutExpo(t){
+  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+}
+function easeOutCubic(t){
+  return 1 - Math.pow(1 - t, 3);
+}
+
+// ── ANIMATION STATE ──
+let phase = 'scatter';   // scatter → collapse → hold → implode → done
+let phaseStart = null;
+let rafId = null;
+
+const SCATTER_DURATION  = 800;   // initial scatter display
+const COLLAPSE_DURATION = 2000;  // particles fly to mark
+const HOLD_DURATION     = 400;   // mark fully assembled, hold
+const IMPLODE_DURATION  = 500;   // mark shrinks to navbar
+const FADE_DURATION     = 400;   // hero fade in
+
+// Navbar logo position (top-left area)
+const NAV_TARGET = { x: 56 + 14, y: 36 }; // approx center of nav mark
+
+function draw(timestamp) {
+  if (!phaseStart) phaseStart = timestamp;
+  const elapsed = timestamp - phaseStart;
+
+  ctx.clearRect(0, 0, W, H);
+
+  if (phase === 'scatter') {
+    // Show particles scattered, slowly fading in
+    const t = Math.min(elapsed / SCATTER_DURATION, 1);
+    particles.forEach(p => {
+      const pt = Math.max(0, (t - p.delay * 0.3) / 0.7);
+      p.opacity = easeOutCubic(Math.min(pt, 1)) * p.baseOpacity * 0.7;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(127,13,242,${p.opacity})`;
+      ctx.fill();
+    });
+
+    if (elapsed > SCATTER_DURATION) {
+      phase = 'collapse';
+      phaseStart = timestamp;
+    }
+
+  } else if (phase === 'collapse') {
+    const t = Math.min(elapsed / COLLAPSE_DURATION, 1);
+
+    particles.forEach(p => {
+      // Each particle has its own delayed start
+      const pt = Math.max(0, (t - p.delay * 0.4) / 0.6);
+      const pe = easeInOutCubic(Math.min(pt, 1));
+
+      p.x = p.sx + (p.tx - p.sx) * pe;
+      p.y = p.sy + (p.ty - p.sy) * pe;
+      p.opacity = (0.7 + pe * 0.3) * p.baseOpacity;
+
+      // Particles glow brighter as they approach target
+      const glow = pe > 0.8 ? (pe - 0.8) / 0.2 : 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * (1 + glow * 0.5), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(127,13,242,${p.opacity})`;
+      ctx.fill();
+
+      if (glow > 0) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(127,13,242,${glow * 0.15})`;
+        ctx.fill();
+      }
+    });
+
+    // Draw assembled squares as particles converge
+    if (t > 0.7) {
+      const squareT = (t - 0.7) / 0.3;
+      const se = easeOutExpo(squareT);
+      targets.forEach((tgt, sq) => {
+        const a = se * SQ_OPACITIES[sq] * 0.6;
+        ctx.fillStyle = `rgba(127,13,242,${a})`;
+        ctx.fillRect(tgt.x - SQ/2, tgt.y - SQ/2, SQ, SQ);
+
+        // Square glow
+        const grad = ctx.createRadialGradient(tgt.x, tgt.y, 0, tgt.x, tgt.y, SQ * 2);
+        grad.addColorStop(0, `rgba(127,13,242,${se * 0.2 * SQ_OPACITIES[sq]})`);
+        grad.addColorStop(1, 'rgba(127,13,242,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(tgt.x - SQ*2, tgt.y - SQ*2, SQ*4, SQ*4);
+      });
+    }
+
+    if (elapsed > COLLAPSE_DURATION) {
+      phase = 'hold';
+      phaseStart = timestamp;
+      // Show DOM mark
+      const fm = document.getElementById('final-mark');
+      fm.style.transition = 'opacity 0.2s ease';
+      fm.style.opacity = '1';
+    }
+
+  } else if (phase === 'hold') {
+    // Draw fully assembled mark on canvas (fades out as DOM mark takes over)
+    const t = Math.min(elapsed / HOLD_DURATION, 1);
+    const fade = 1 - easeOutCubic(t);
+
+    targets.forEach((tgt, sq) => {
+      ctx.fillStyle = `rgba(127,13,242,${fade * SQ_OPACITIES[sq]})`;
+      ctx.fillRect(tgt.x - SQ/2, tgt.y - SQ/2, SQ, SQ);
+    });
+
+    if (elapsed > HOLD_DURATION) {
+      phase = 'implode';
+      phaseStart = timestamp;
+    }
+
+  } else if (phase === 'implode') {
+    const t = Math.min(elapsed / IMPLODE_DURATION, 1);
+    const e = easeInOutCubic(t);
+
+    // DOM mark shrinks toward nav position
+    const fm = document.getElementById('final-mark');
+    const startX = cx - 26;
+    const startY = cy - 26;
+    const endX   = NAV_TARGET.x - 26;
+    const endY   = NAV_TARGET.y - 26;
+
+    const scale = 1 - e * 0.85;
+    const tx = startX + (endX - startX) * e;
+    const ty = startY + (endY - startY) * e;
+
+    fm.style.transform = `translate(${(tx - startX)}px, ${(ty - startY)}px) scale(${scale})`;
+    fm.style.opacity = String(1 - e * 0.7);
+
+    // Hero starts fading in
+    if (t > 0.5) {
+      const ht = (t - 0.5) / 0.5;
+      document.getElementById('hero').style.opacity = String(easeOutCubic(ht));
+    }
+
+    if (elapsed > IMPLODE_DURATION) {
+      phase = 'done';
+      cancelAnimationFrame(rafId);
+      finalize();
+      return;
+    }
+  }
+
+  rafId = requestAnimationFrame(draw);
+}
+
+function finalize() {
+  const preloader = document.getElementById('preloader');
+  const hero = document.getElementById('hero');
+
+  preloader.style.transition = 'opacity 0.3s ease';
+  preloader.style.opacity = '0';
+  hero.style.opacity = '1';
+
+  setTimeout(() => {
+    preloader.style.display = 'none';
+    hero.classList.add('open');
+    document.body.style.overflow = '';
+  }, 300);
+}
+
+// ── KICK OFF ──
+document.body.style.overflow = 'hidden';
+setTimeout(() => {
+  rafId = requestAnimationFrame(draw);
+}, 300);
+</script>
+</body>
+</html>
