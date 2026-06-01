@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Snapwise — Your saves, finally read.</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Jost:wght@200;300;400;500&family=DM+Mono:wght@300;400&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            snapBg: '#050308',
+            snapPrimary: '#7f0df2',
+            snapPrimaryDim: '#3D0875',
+            snapSurface: '#0F0A14',
+            snapText: '#F0ECF7',
+            snapTextMuted: '#6B6275',
+            snapTextDim: '#2E2838',
+          },
+          fontFamily: {
+            display: ['"Newsreader"', 'serif'],
+            ui: ['Jost', 'sans-serif'],
+            label: ['"DM Mono"', 'monospace'],
+          },
+          keyframes: {
+            'scroll-drip': {
+              '0%': { top: '-100%' },
+              '100%': { top: '100%' },
+            },
+            'fade-up': {
+              from: { opacity: '0', transform: 'translateY(24px)' },
+              to: { opacity: '1', transform: 'translateY(0)' },
+            },
+            'orb-float': {
+              '0%, 100%': { transform: 'translateY(0) scale(1)' },
+              '50%': { transform: 'translateY(-28px) scale(1.04)' },
+            },
+            'line-reveal': {
+              to: { transform: 'scaleX(1)' },
+            },
+            blink: {
+              '0%, 100%': { opacity: '1' },
+              '50%': { opacity: '0' },
+            },
+            pulse: {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%': { opacity: '0.4', transform: 'scale(0.8)' },
+            },
+            'hl-appear': {
+              from: { opacity: '0', transform: 'scaleX(0.7)' },
+              to: { opacity: '1', transform: 'scaleX(1)' },
+            },
+            'field-in': {
+              from: { opacity: '0', transform: 'translateX(10px)' },
+              to: { opacity: '1', transform: 'translateX(0)' },
+            },
+          },
+          animation: {
+            'scroll-drip': 'scroll-drip 2s 2s ease-in-out infinite',
+            'fade-up': 'fade-up 1s forwards',
+            'orb-float': 'orb-float 8s ease-in-out infinite',
+            'line-reveal': 'line-reveal 0.8s 1.8s forwards',
+            blink: 'blink 1s infinite',
+            pulse: 'pulse 1.5s infinite',
+            'hl-appear': 'hl-appear 0.3s both',
+            'field-in': 'field-in 0.3s forwards',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-snapBg text-snapText font-ui font-light overflow-x-hidden">
+  <!-- BEGIN: GrainOverlay -->
+  <!-- <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999] opacity-[0.04]"
+    style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E&quot;);">
+  </div> -->
+
+  <!-- Custom Cursor -->
+  <div id="cursor"
+    class="fixed w-2 h-2 bg-snapPrimary rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 mix-blend-screen">
+  </div>
+  <div id="cursor-ring"
+    class="fixed w-9 h-9 border border-snapPrimary/50 rounded-full pointer-events-none z-[9998] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-150">
+  </div>
+
+  <!-- ════ NAVBAR ════ -->
+  <nav id="nav" class="fixed top-0 left-0 w-full z-50 bg-snapBg/80 backdrop-blur-xl border-b border-snapBorder/20">
+    <div class="max-w-6xl mx-auto px-10 h-16 flex items-center justify-between">
+      <a class="nav-logo flex items-center gap-3" href="#">
+        <div class="nav-mark w-8 h-8 bg-snapPrimary rounded-lg transform rotate-45 flex items-center justify-center">
+          <span class="w-1 h-1 bg-snapBg rounded-full"></span>
+          <span class="w-1 h-1 bg-snapBg rounded-full"></span>
+        </div>
+        <span class="nav-wordmark font-display text-2xl font-[300] text-snapText">Snapwise</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <button
+          class="nav-search w-10 h-10 bg-snapSurface border border-snapBorder/20 rounded-lg inline-flex items-center justify-center text-snapTextMuted hover:text-snapText transition-colors">
+          ⌕
+        </button>
+        <button id="nav-menu-btn"
+          class="font-label text-[10px] tracking-[0.4em] uppercase text-snapText px-4 py-2 border border-snapBorder/20 rounded-lg hover:bg-snapSurface transition-colors">
+          Menu
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════ HERO ════ -->
+  <section id="hero"
+    class="min-h-screen flex flex-col justify-center items-center text-center px-10 py-32 overflow-hidden relative">
+    <!-- Grid Background -->
+    <div class="absolute inset-0 opacity-100"
+      style="background-image: linear-gradient(rgba(127, 13, 242, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(127, 13, 242, 0.04) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);">
+    </div>
+
+    <!-- Floating Orbs -->
+    <div
+      class="absolute rounded-full pointer-events-none blur-[100px] w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] [background:radial-gradient(circle,rgba(127,13,242,0.25)_0%,transparent_70%)] animate-orb-float">
+    </div>
+    <div
+      class="absolute rounded-full pointer-events-none blur-[100px] w-[360px] h-[360px] top-1/4 left-[15%] [background:radial-gradient(circle,rgba(90,8,176,0.15)_0%,transparent_70%)] animate-orb-float [animation-delay:-3s]">
+    </div>
+    <div
+      class="absolute rounded-full pointer-events-none blur-[100px] w-[280px] h-[280px] bottom-[18%] right-[12%] [background:radial-gradient(circle,rgba(127,13,242,0.1)_0%,transparent_70%)] animate-orb-float [animation-delay:-5s]">
+    </div>
+
+    <!-- Eyebrow -->
+    <div
+      class="flex items-center gap-4 mb-8 text-[16px] font-label tracking-[0.4em] uppercase text-snapPrimary relative z-10 opacity-0 animate-fade-up [animation-delay:0.3s;animation-fill-mode:forwards]">
+      <span class="w-10 h-px bg-snapPrimary opacity-40"></span>
+      Screenshot Intelligence
+      <span class="w-10 h-px bg-snapPrimary opacity-40"></span>
+    </div>
+
+    <!-- Headline -->
+    <h1
+      class="mb-10 text-[clamp(72px,11vw,160px)] font-display font-[300] leading-[0.92] tracking-[-0.02em] text-snapText relative z-10 opacity-0 animate-fade-up [animation-delay:0.5s;animation-duration:1.2s;animation-fill-mode:forwards]">
+      Your saves,<br />finally <em class="text-snapPrimary italic inline-block align-baseline">read.<span
+          class="block h-[2px] bg-snapPrimary/30 origin-left scale-x-0 mt-1 animate-line-reveal [animation-delay:1.8s;animation-duration:0.8s;animation-fill-mode:forwards]"></span></em>
+    </h1>
+
+    <!-- Subtitle -->
+    <p
+      class="text-lg lg:text-xl font-ui font-[300] text-snapTextMuted max-w-[500px] leading-[1.85] mb-14 relative z-10 opacity-0 animate-fade-up [animation-delay:0.75s;animation-fill-mode:forwards]">
+      Snapwise extracts meaning from every screenshot you take —
+      <strong class="text-snapText font-[400]">automatically sorted, permanently retrievable,</strong> entirely yours.
+    </p>
+
+    <!-- CTA -->
+    <div
+      class="flex flex-col items-center gap-[14px] relative z-10 opacity-0 animate-fade-up [animation-delay:1s;animation-fill-mode:forwards]">
+      <button
+        class="font-label text-[14px] tracking-[0.25em] uppercase bg-snapPrimary text-white border-none px-14 py-[18px] cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:scale-[1.02] shadow-[0_0_40px_rgba(127,13,242,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(127,13,242,0.6),inset_0_1px_0_rgba(255,255,255,0.15)]">
+        Start Organizing
+      </button>
+      <span class="font-label text-[14px] tracking-[0.2em] uppercase text-snapTextDim">
+        Free forever · No credit card · On-device AI
+      </span>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div
+      class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 animate-fade-up [animation-delay:1.5s;animation-fill-mode:forwards]">
+      <span class="font-label text-[8px] tracking-[0.3em] uppercase text-snapTextDim">Scroll</span>
+      <div class="w-px h-12 bg-gradient-to-b from-snapTextDim to-transparent overflow-hidden relative">
+        <div
+          class="absolute top-[-100%] left-0 right-0 h-full bg-snapPrimary animate-scroll-drip [animation-duration:2s;animation-delay:2s;animation-timing-function:ease-in-out;animation-iteration-count:infinite]">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ STATS ════ -->
+  <div
+    class="stats-bar reveal border-t border-b border-white/10 bg-snapBg2 px-14 py-7 grid grid-cols-4 gap-4 opacity-0 [animation:fade-up_1s_2s_forwards]">
+    <div class="stat-item text-center">
+      <div class="stat-num font-display text-5xl font-[300] leading-none text-snapText mb-2">
+        4<span class="text-snapPrimary">,</span>847
+      </div>
+      <div class="stat-label font-ui text-sm text-snapTextMuted">Avg screenshots on device</div>
+    </div>
+    <div class="stat-item text-center">
+      <div class="stat-num font-display text-5xl font-[300] leading-none text-snapText mb-2">9</div>
+      <div class="stat-label font-ui text-sm text-snapTextMuted">Actually revisited</div>
+    </div>
+    <div class="stat-item text-center">
+      <div class="stat-num font-display text-5xl font-[300] leading-none text-snapText mb-2">
+        <span class="text-snapPrimary">&lt;</span>2s
+      </div>
+      <div class="stat-label font-ui text-sm text-snapTextMuted">Extract & organize time</div>
+    </div>
+    <div class="stat-item text-center">
+      <div class="stat-num font-display text-5xl font-[300] leading-none text-snapText mb-2">0</div>
+      <div class="stat-label font-ui text-sm text-snapTextMuted">Data sent to cloud</div>
+    </div>
+  </div>
+
+  <!-- ════ PROBLEM PINNED ════ -->
+  <div id="problem-pin-wrap" class="relative h-auto lg:h-[300vh]">
+    <div id="problem-pin"
+      class="relative h-auto grid grid-cols-1 lg:sticky lg:top-0 lg:h-screen lg:grid-cols-2 overflow-hidden">
+      <div class="hidden lg:block absolute left-0 top-0 bottom-0 w-[2px] bg-snapTextDim z-10">
+        <div class="w-full h-0 bg-snapPrimary shadow-[0_0_8px_#7f0df2] transition-[height] duration-100"
+          id="problem-fill"></div>
+      </div>
+
+      <div class="relative flex flex-col justify-center px-6 py-10 lg:px-20 lg:py-20">
+        <div
+          class="hidden lg:block absolute right-0 top-[10%] bottom-[10%] w-px bg-gradient-to-b from-transparent via-snapPrimary/25 to-transparent">
+        </div>
+
+        <div
+          class="problem-step opacity-100 translate-y-0 pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] relative lg:absolute lg:inset-0 lg:px-20 lg:py-20 lg:flex lg:flex-col lg:justify-center"
+          id="ps-1">
+          <div class="font-label text-[9px] tracking-[0.4em] uppercase text-snapPrimary mb-8 flex items-center gap-3">
+            <span class="w-6 h-px bg-snapPrimary"></span>The Problem</div>
+          <h2
+            class="font-display text-[clamp(42px,4.5vw,68px)] font-light leading-[1.05] tracking-[-0.02em] text-snapText mb-7">
+            You capture<br />everything.<br />You retrieve <em class="italic text-snapPrimary">nothing.</em></h2>
+          <p class="text-[17px] font-light text-snapTextMuted leading-[1.9] max-w-[420px]">Screenshots are the <strong
+              class="font-normal text-snapText">highest-intent saves</strong> you make. A price. A reference. A quote. A
+            link.<br /><br />They disappear the moment you take them.</p>
+        </div>
+
+        <div
+          class="problem-step hidden opacity-0 translate-y-10 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] relative lg:absolute lg:inset-0 lg:px-20 lg:py-20 lg:flex lg:flex-col lg:justify-center"
+          id="ps-2">
+          <div class="font-label text-[9px] tracking-[0.4em] uppercase text-snapPrimary mb-8 flex items-center gap-3">
+            <span class="w-6 h-px bg-snapPrimary"></span>The Frustration</div>
+          <h2
+            class="font-display text-[clamp(42px,4.5vw,68px)] font-light leading-[1.05] tracking-[-0.02em] text-snapText mb-7">
+            You know it's<br />in there.<br /><em class="italic text-snapPrimary">Somewhere.</em></h2>
+          <p class="text-[17px] font-light text-snapTextMuted leading-[1.9] max-w-[420px]">The folder has no memory. No
+            search finds it. The <strong class="font-normal text-snapText">intent behind the capture</strong> is lost
+            the moment you take it.</p>
+        </div>
+
+        <div
+          class="problem-step hidden opacity-0 translate-y-10 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] relative lg:absolute lg:inset-0 lg:px-20 lg:py-20 lg:flex lg:flex-col lg:justify-center"
+          id="ps-3">
+          <div class="font-label text-[9px] tracking-[0.4em] uppercase text-snapPrimary mb-8 flex items-center gap-3">
+            <span class="w-6 h-px bg-snapPrimary"></span>The Resolution</div>
+          <h2
+            class="font-display text-[clamp(42px,4.5vw,68px)] font-light leading-[1.05] tracking-[-0.02em] text-snapText mb-7">
+            Until<br /><em class="italic text-snapPrimary">now.</em></h2>
+          <p class="text-[17px] font-light text-snapTextMuted leading-[1.9] max-w-[420px]">Snapwise reads what you
+            saved. Every pixel becomes a data point. Every capture becomes a <strong
+              class="font-normal text-snapText">record you can find.</strong></p>
+        </div>
+      </div>
+
+      <div class="relative bg-snapSurface overflow-hidden">
+        <div
+          class="problem-visual opacity-100 transition-opacity duration-500 p-6 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:p-12"
+          id="pv-1">
+          <div class="w-full relative">
+            <div class="grid grid-cols-3 lg:grid-cols-4 gap-1.5 -rotate-2">
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[140px]"></div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[90px] mt-5"></div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[120px]"></div>
+              <div
+                class="hidden lg:block bg-snapTextDim border border-white/10 relative overflow-hidden h-[100px] mt-2.5">
+              </div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[100px]"></div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[130px] -mt-4"></div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[80px]"></div>
+              <div
+                class="hidden lg:block bg-snapTextDim border border-white/10 relative overflow-hidden h-[110px] mt-1">
+              </div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[120px]"></div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[90px] mt-4"></div>
+              <div class="bg-snapTextDim border border-white/10 relative overflow-hidden h-[140px]"></div>
+              <div class="hidden lg:block bg-snapTextDim border border-white/10 relative overflow-hidden h-[100px]">
+              </div>
+            </div>
+            <div class="absolute bottom-8 right-8 font-label text-[11px] tracking-[0.15em] text-snapTextMuted"><strong
+                id="counter" class="block mb-1 text-snapPrimary text-[22px] font-normal">0</strong>screenshots &amp;
+              counting</div>
+          </div>
+        </div>
+
+        <div
+          class="problem-visual hidden opacity-0 transition-opacity duration-500 p-6 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:p-12"
+          id="pv-2">
+          <div class="w-full flex flex-col gap-4">
+            <div
+              class="bg-snapBg border border-snapPrimary/20 px-5 py-4 flex items-center gap-3 shadow-[0_0_24px_rgba(127,13,242,0.1)]">
+              <span class="text-snapTextMuted text-base">⌕</span>
+              <span class="font-label text-[13px] tracking-[0.05em] text-snapText">that blue chair from instagram<span
+                  class="inline-block w-[2px] h-[14px] bg-snapPrimary ml-0.5 align-middle animate-blink"></span></span>
+            </div>
+            <div class="border border-dashed border-white/10 p-12 flex flex-col items-center justify-center gap-3">
+              <div
+                class="w-12 h-12 border border-red-400/30 flex items-center justify-center text-red-300/60 text-[22px]">
+                ✕</div>
+              <div class="font-label text-[10px] tracking-[0.25em] uppercase text-red-300/60">No results found</div>
+              <p class="text-xs text-snapTextDim text-center">Your folder can't read what's inside it.<br />Only
+                filenames. Only dates.</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="problem-visual hidden opacity-0 transition-opacity duration-500 p-6 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:p-12"
+          id="pv-3">
+          <div class="w-full">
+            <div
+              class="font-label text-[9px] tracking-[0.3em] uppercase text-snapPrimary mb-4 pb-3 border-b border-white/10">
+              Snapwise - Organized</div>
+            <div class="flex flex-col gap-2">
+              <div class="bg-snapBg border border-white/10 px-5 py-4 flex items-center gap-4">
+                <div
+                  class="w-9 h-9 bg-snapPrimaryDim border border-snapPrimary/20 flex items-center justify-center shrink-0 text-base">
+                  🛒</div>
+                <div class="flex-1">
+                  <div class="font-label text-[8px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Buy Later</div>
+                  <div class="text-[13px] text-snapText font-light">Blue Woven Accent Chair - Zara Home</div>
+                </div>
+                <div class="font-label text-[9px] tracking-[0.1em] text-snapTextMuted">$249</div>
+              </div>
+              <div class="bg-snapBg border border-white/10 px-5 py-4 flex items-center gap-4">
+                <div
+                  class="w-9 h-9 bg-snapPrimaryDim border border-snapPrimary/20 flex items-center justify-center shrink-0 text-base">
+                  📺</div>
+                <div class="flex-1">
+                  <div class="font-label text-[8px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Watch List</div>
+                  <div class="text-[13px] text-snapText font-light">Shogun - FX Series</div>
+                </div>
+                <div class="font-label text-[9px] tracking-[0.1em] text-snapTextMuted">Series</div>
+              </div>
+              <div class="bg-snapBg border border-white/10 px-5 py-4 flex items-center gap-4">
+                <div
+                  class="w-9 h-9 bg-snapPrimaryDim border border-snapPrimary/20 flex items-center justify-center shrink-0 text-base">
+                  ✈️</div>
+                <div class="flex-1">
+                  <div class="font-label text-[8px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Travel</div>
+                  <div class="text-[13px] text-snapText font-light">Paris - Nov 14-21</div>
+                </div>
+                <div class="font-label text-[9px] tracking-[0.1em] text-snapTextMuted">7 days</div>
+              </div>
+              <div class="bg-snapBg border border-white/10 px-5 py-4 flex items-center gap-4">
+                <div
+                  class="w-9 h-9 bg-snapPrimaryDim border border-snapPrimary/20 flex items-center justify-center shrink-0 text-base">
+                  💻</div>
+                <div class="flex-1">
+                  <div class="font-label text-[8px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Code Snippet</div>
+                  <div class="text-[13px] text-snapText font-light">Tailwind scroll-margin trick</div>
+                </div>
+                <div class="font-label text-[9px] tracking-[0.1em] text-snapTextMuted">CSS</div>
+              </div>
+              <div class="bg-snapBg border border-white/10 px-5 py-4 flex items-center gap-4">
+                <div
+                  class="w-9 h-9 bg-snapPrimaryDim border border-snapPrimary/20 flex items-center justify-center shrink-0 text-base">
+                  💬</div>
+                <div class="flex-1">
+                  <div class="font-label text-[8px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Quote</div>
+                  <div class="text-[13px] text-snapText font-light">"Clarity is the new sophistication."</div>
+                </div>
+                <div class="font-label text-[9px] tracking-[0.1em] text-snapTextMuted">Saved</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ HOW IT WORKS ════ -->
+  <div id="how-pin-wrap" class="relative h-auto lg:h-[350vh]">
+    <div id="how-pin"
+      class="relative h-auto bg-snapBg2 border-t border-white/10 lg:sticky lg:top-0 lg:h-screen overflow-hidden">
+      <div class="relative z-10 flex items-center gap-6 px-6 pt-8 lg:absolute lg:top-12 lg:left-14 lg:px-0 lg:pt-0">
+        <span class="font-label text-[9px] tracking-[0.35em] uppercase text-snapPrimary">How It Works</span>
+        <div class="flex gap-1.5">
+          <div
+            class="how-dot w-1.5 h-1.5 border border-snapTextMuted rounded-full bg-snapPrimary border-snapPrimary shadow-[0_0_8px_#7f0df2]"
+            id="hd-0"></div>
+          <div class="how-dot w-1.5 h-1.5 border border-snapTextMuted rounded-full" id="hd-1"></div>
+          <div class="how-dot w-1.5 h-1.5 border border-snapTextMuted rounded-full" id="hd-2"></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[50%_50%] h-auto lg:h-full">
+        <div
+          class="relative flex flex-col justify-center border-b border-white/10 lg:border-b-0 lg:border-r lg:border-r-white/10 px-6 py-8 lg:px-20 lg:pt-[120px] lg:pb-20">
+          <div
+            class="how-step opacity-100 translate-y-0 relative lg:absolute lg:left-20 lg:right-14 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            id="hs-0">
+            <div
+              class="font-display text-[84px] lg:text-[120px] font-light text-snapPrimary/25 leading-none tracking-[-0.04em] -mb-2 lg:-mb-5 relative z-0">
+              01</div>
+            <h3
+              class="font-display text-[clamp(42px,5vw,80px)] font-light leading-none tracking-[-0.02em] text-snapText mb-6 relative z-10">
+              <em class="italic text-snapPrimary">Capture.</em></h3>
+            <p class="text-base font-light text-snapTextMuted leading-[1.9] max-w-[380px]">Screenshot anything. A
+              product. A price. An error message. A recipe. A quote that hit.<br /><br /><strong
+                class="text-snapText font-normal">Snapwise is running silently in the background,</strong> waiting for
+              whatever you find worth saving.</p>
+          </div>
+
+          <div
+            class="how-step hidden opacity-0 translate-y-8 relative lg:absolute lg:left-20 lg:right-14 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            id="hs-1">
+            <div
+              class="font-display text-[84px] lg:text-[120px] font-light text-snapPrimary/25 leading-none tracking-[-0.04em] -mb-2 lg:-mb-5 relative z-0">
+              02</div>
+            <h3
+              class="font-display text-[clamp(42px,5vw,80px)] font-light leading-none tracking-[-0.02em] text-snapText mb-6 relative z-10">
+              <em class="italic text-snapPrimary">Extract.</em></h3>
+            <p class="text-base font-light text-snapTextMuted leading-[1.9] max-w-[380px]">Pixel-perfect OCR reads every
+              word. AI parses intent - names, prices, dates, links, context.<br /><br /><strong
+                class="text-snapText font-normal">Flat pixels become structured records</strong> in under two seconds.
+              No cloud. No waiting.</p>
+          </div>
+
+          <div
+            class="how-step hidden opacity-0 translate-y-8 relative lg:absolute lg:left-20 lg:right-14 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            id="hs-2">
+            <div
+              class="font-display text-[84px] lg:text-[120px] font-light text-snapPrimary/25 leading-none tracking-[-0.04em] -mb-2 lg:-mb-5 relative z-0">
+              03</div>
+            <h3
+              class="font-display text-[clamp(42px,5vw,80px)] font-light leading-none tracking-[-0.02em] text-snapText mb-6 relative z-10">
+              <em class="italic text-snapPrimary">Organize.</em></h3>
+            <p class="text-base font-light text-snapTextMuted leading-[1.9] max-w-[380px]">Every capture lands exactly
+              where it belongs - automatically. Search in plain language. Surface it when you need
+              it.<br /><br /><strong class="text-snapText font-normal">Your archive, made intelligent.</strong></p>
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden bg-snapSurface">
+          <div
+            class="how-visual opacity-100 p-6 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:p-12"
+            id="hv-0">
+            <div class="w-full flex flex-col gap-3">
+              <div class="bg-snapBg border border-white/10 overflow-hidden">
+                <div class="bg-snapBg2 px-4 py-2.5 flex items-center gap-2 border-b border-white/10">
+                  <div class="w-2 h-2 rounded-full bg-[#ff5f57]"></div>
+                  <div class="w-2 h-2 rounded-full bg-[#febc2e]"></div>
+                  <div class="w-2 h-2 rounded-full bg-[#28c840]"></div>
+                  <div class="flex-1 bg-snapTextDim h-[22px] mx-2 px-2.5 flex items-center"><span
+                      class="font-label text-[9px] tracking-[0.05em] text-snapTextMuted">instagram.com/explore</span>
+                  </div>
+                </div>
+                <div class="p-5 grid grid-cols-2 gap-3">
+                  <div class="aspect-square bg-snapTextDim relative overflow-hidden"></div>
+                  <div class="flex flex-col justify-center gap-2">
+                    <div class="h-2 bg-snapTextDim"></div>
+                    <div class="h-2 bg-snapTextDim w-[70%]"></div>
+                    <div class="h-2 bg-snapTextDim w-[85%]"></div>
+                    <div class="h-2 bg-snapTextDim w-[55%]"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-center gap-2.5 p-3 border border-snapPrimary/20 bg-snapPrimary/5">
+                <span class="text-[18px]">📷</span>
+                <span class="font-label text-[10px] tracking-[0.2em] uppercase text-snapPrimary">Screenshot
+                  captured</span>
+                <div class="w-2 h-2 rounded-full bg-snapPrimary animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="how-visual hidden opacity-0 p-6 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:p-12"
+            id="hv-1">
+            <div class="w-full">
+              <div class="bg-snapBg border border-white/10 p-5 mb-3">
+                <div class="grid grid-cols-2 gap-3 items-center">
+                  <div class="aspect-[4/3] bg-snapTextDim relative overflow-hidden">
+                    <div
+                      class="absolute top-[20%] left-[10%] w-[80%] h-[20%] border border-snapPrimary bg-snapPrimary/10 shadow-[0_0_12px_rgba(127,13,242,0.2)] animate-hl-appear [animation-delay:0.5s]">
+                    </div>
+                    <div
+                      class="absolute top-[50%] left-[10%] w-[50%] h-[15%] border border-snapPrimary bg-snapPrimary/10 shadow-[0_0_12px_rgba(127,13,242,0.2)] animate-hl-appear [animation-delay:0.8s]">
+                    </div>
+                    <div
+                      class="absolute top-[70%] left-[10%] w-[65%] h-[15%] border border-snapPrimary bg-snapPrimary/10 shadow-[0_0_12px_rgba(127,13,242,0.2)] animate-hl-appear [animation-delay:1.1s]">
+                    </div>
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <div
+                      class="bg-snapSurface border border-white/10 px-3.5 py-2.5 opacity-0 animate-field-in [animation-delay:0.6s]">
+                      <div class="font-label text-[7px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Product</div>
+                      <div class="text-xs text-snapText font-light">Woven Accent Chair</div>
+                    </div>
+                    <div
+                      class="bg-snapSurface border border-white/10 px-3.5 py-2.5 opacity-0 animate-field-in [animation-delay:0.9s]">
+                      <div class="font-label text-[7px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Price</div>
+                      <div class="text-xs text-snapText font-light">$249.00</div>
+                    </div>
+                    <div
+                      class="bg-snapSurface border border-white/10 px-3.5 py-2.5 opacity-0 animate-field-in [animation-delay:1.2s]">
+                      <div class="font-label text-[7px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Source</div>
+                      <div class="text-xs text-snapText font-light">Zara Home</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="how-visual hidden opacity-0 p-6 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center lg:p-12"
+            id="hv-2">
+            <div class="w-full flex flex-col gap-2">
+              <div
+                class="bg-snapBg border border-snapPrimary/20 px-[18px] py-[14px] flex items-center gap-2.5 shadow-[0_0_20px_rgba(127,13,242,0.08)] mb-2">
+                <span class="text-snapTextMuted text-sm">⌕</span><span
+                  class="font-label text-xs tracking-[0.04em] text-snapText flex-1">blue chair from
+                  instagram</span><span
+                  class="font-label text-[8px] tracking-[0.2em] uppercase text-snapPrimary bg-snapPrimaryDim border border-snapPrimary/20 px-2.5 py-1">1
+                  match</span></div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                <div
+                  class="bg-snapSurface border border-snapPrimary p-4 shadow-[0_0_20px_rgba(127,13,242,0.15)] opacity-0 animate-field-in [animation-delay:0.2s]">
+                  <div class="aspect-[16/9] bg-snapTextDim mb-2.5 relative overflow-hidden"></div>
+                  <div class="font-label text-[7px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Buy Later</div>
+                  <div class="text-xs text-snapText font-light leading-[1.4]">Woven Accent Chair - Zara Home</div>
+                </div>
+                <div
+                  class="bg-snapSurface border border-white/10 p-4 opacity-0 animate-field-in [animation-delay:0.35s]">
+                  <div class="aspect-[16/9] bg-snapTextDim mb-2.5 relative overflow-hidden"></div>
+                  <div class="font-label text-[7px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Inspiration</div>
+                  <div class="text-xs text-snapText font-light leading-[1.4]">Living room moodboard ref</div>
+                </div>
+                <div
+                  class="bg-snapSurface border border-white/10 p-4 lg:col-span-2 opacity-0 animate-field-in [animation-delay:0.5s]">
+                  <div class="aspect-[16/9] bg-snapTextDim mb-2.5 relative overflow-hidden"></div>
+                  <div class="font-label text-[7px] tracking-[0.3em] uppercase text-snapPrimary mb-1">Design Ref</div>
+                  <div class="text-xs text-snapText font-light leading-[1.4]">Editorial layout - Kinfolk</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ FOOTER ════ -->
+  <footer class="bg-snapBg border-t border-snapBorder/20 px-10 py-16">
+    <div class="max-w-6xl mx-auto">
+      <div class="footer-brand mb-12 flex justify-between">
+        <div class="font-display text-4xl font-[300] text-snapText">Snapwise</div>
+        <div class="footer-brand-tagline font-ui text-snapTextMuted mt-2">The editorial intelligence layer for your digital memory.</div>
+      </div>
+
+      <div class="footer-utility grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+        <div class="footer-col">
+          <span
+            class="footer-col-title font-label text-[10px] tracking-[0.4em] uppercase text-snapPrimary mb-4">Product</span>
+          <ul class="space-y-2">
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">Features</a></li>
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">How it works</a>
+            </li>
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">Pricing</a></li>
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <span
+            class="footer-col-title font-label text-[10px] tracking-[0.4em] uppercase text-snapPrimary mb-4">Company</span>
+          <ul class="space-y-2">
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">About</a></li>
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">Manifesto</a></li>
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">Privacy</a></li>
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">Terms</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <span
+            class="footer-col-title font-label text-[10px] tracking-[0.4em] uppercase text-snapPrimary mb-4">Connect</span>
+          <ul class="space-y-2">
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">X / Twitter</a>
+            </li>
+            <li><a href="#" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">Instagram</a></li>
+            <li><a href="#"
+                class="font-ui text-snapTextMuted hover:text-snapText transition-colors">hello@snapwise.ai</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-newsletter bg-snapSurface border border-snapBorder/20 rounded-lg p-8 mb-12">
+        <div class="footer-nl-title font-display text-2xl font-[300] text-snapText mb-2">Stay in the loop.</div>
+        <div class="footer-nl-sub font-ui text-snapTextMuted mb-6">Early access, changelog updates, and product news. No
+          noise.</div>
+        <div class="flex gap-3 mb-6">
+          <input
+            class="footer-nl-input flex-1 bg-snapBg border border-snapBorder/20 rounded-lg px-4 py-3 font-ui text-snapText placeholder:text-snapTextDim focus:outline-none focus:border-snapPrimary/50"
+            type="email" placeholder="your@email.com" />
+          <button
+            class="footer-nl-btn font-label text-[10px] tracking-[0.25em] uppercase bg-snapPrimary text-white border-none px-6 py-3 rounded-lg hover:bg-snapPrimaryDim transition-colors">Subscribe</button>
+        </div>
+      </div>
+
+      <div
+        class="footer-bottom flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-snapBorder/20">
+        <span class="footer-copy font-label text-[10px] tracking-[0.3em] uppercase text-snapTextDim"> 2025 Snapwise ·
+          All rights reserved</span>
+        <div class="footer-socials flex gap-4">
+          <a href="#" title="Twitter" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">𝕏</a>
+          <a href="#" title="Instagram" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">IG</a>
+          <a href="#" title="LinkedIn" class="font-ui text-snapTextMuted hover:text-snapText transition-colors">in</a>
+        </div>
+        <div class="footer-badge font-label text-[10px] tracking-[0.3em] uppercase text-snapPrimary">On-device AI · Zero
+          cloud</div>
+      </div>
+    </div>
+    <div class="mt-4 text-center footer-brand-name">
+      Snapwise
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>

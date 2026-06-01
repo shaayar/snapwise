@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Snapwise — Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0A0A0A;
+  --bg2:#111008;
+  --surface:#141414;
+  --primary:#B8924A;
+  --primary-b:#7A5F30;
+  --primary-d:rgba(184,146,74,0.1);
+  --primary-g:rgba(184,146,74,0.05);
+  --border:rgba(184,146,74,0.2);
+  --border-s:rgba(240,235,225,0.07);
+  --text:#F0EBE1;
+  --muted:#9A9080;
+  --dim:#3A342C;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Jost',sans-serif;font-weight:300;
+  overflow-x:hidden;cursor:none;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--primary);color:#0A0A0A;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--primary-b);}
+
+/* ── CURSOR ── */
+#cursor{position:fixed;width:8px;height:8px;background:var(--primary);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(184,146,74,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease-out;}
+
+/* ── GRAIN ── */
+#grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:0.04;
+background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+background-size:200px 200px;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-bottom:1px solid transparent;transition:background 0.4s,border-color 0.4s;}
+nav.scrolled{background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-color:var(--border-s);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-mark{width:26px;height:26px;display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.nav-mark span{display:block;border:1px solid var(--primary);}
+.nav-mark span:nth-child(1){background:var(--primary);}
+.nav-mark span:nth-child(4){background:rgba(184,146,74,0.35);}
+.nav-wordmark{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:20px;}
+.nav-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color 0.3s;}
+.nav-back:hover{color:var(--primary);}
+.nav-back::before{content:'←';font-size:14px;}
+#nav-menu-btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text);background:none;border:1px solid var(--border);padding:10px 28px;cursor:none;transition:background 0.3s,box-shadow 0.3s,color 0.3s;}
+#nav-menu-btn:hover{background:var(--primary);border-color:var(--primary);box-shadow:0 0 24px rgba(184,146,74,0.3);color:#0A0A0A;}
+
+/* ── PAGE HEADER ── */
+.page-header{
+  padding:160px 80px 100px;
+  position:relative;overflow:hidden;
+  border-bottom:1px solid var(--border-s);
+}
+.page-header-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border-s) 1px,transparent 1px),linear-gradient(90deg,var(--border-s) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 70% 100% at 50% 0%,black,transparent);
+}
+.ph-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--primary);margin-bottom:28px;display:flex;align-items:center;gap:14px;opacity:0;animation:fade-up 0.8s 0.2s forwards;}
+.ph-eyebrow::before{content:'';width:28px;height:1px;background:var(--primary);}
+.ph-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(60px,8vw,120px);font-weight:300;line-height:0.92;letter-spacing:-0.02em;color:var(--text);max-width:800px;opacity:0;animation:fade-up 1s 0.35s forwards;}
+.ph-headline em{font-style:italic;color:var(--primary);}
+.ph-sub{font-size:18px;font-weight:300;color:var(--muted);max-width:500px;line-height:1.85;margin-top:32px;opacity:0;animation:fade-up 0.9s 0.5s forwards;}
+
+/* Toggle */
+.billing-toggle{
+  display:flex;align-items:center;gap:0;
+  border:1px solid var(--border-s);
+  width:fit-content;
+  margin-top:48px;
+  opacity:0;animation:fade-up 0.8s 0.65s forwards;
+}
+.toggle-opt{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  padding:10px 24px;cursor:none;color:var(--muted);
+  transition:background 0.3s,color 0.3s;
+  border:none;background:none;
+}
+.toggle-opt.active{background:var(--primary);color:#0A0A0A;}
+.toggle-badge{
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--primary);background:var(--primary-d);border:1px solid var(--border);
+  padding:4px 10px;margin-left:16px;
+}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── PLANS GRID ── */
+.plans-section{padding:80px;}
+.plans-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;
+  margin-bottom:80px;
+}
+
+.plan-card{
+  background:var(--surface);border:1px solid var(--border-s);
+  padding:52px 44px;position:relative;overflow:hidden;
+  transition:border-color 0.4s;
+  display:flex;flex-direction:column;
+}
+.plan-card:hover{border-color:rgba(184,146,74,0.25);}
+.plan-card.featured{
+  background:var(--bg2);
+  border-color:var(--border);
+  box-shadow:0 0 60px rgba(184,146,74,0.06);
+}
+.plan-card.featured::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);
+}
+
+.plan-featured-badge{
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:28px;display:flex;align-items:center;gap:8px;
+}
+.plan-featured-badge::before{content:'';width:16px;height:1px;background:var(--primary);}
+
+.plan-name{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:20px;
+}
+.plan-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:72px;font-weight:300;line-height:1;letter-spacing:-0.03em;
+  color:var(--text);margin-bottom:8px;
+}
+.plan-price sup{font-size:28px;vertical-align:top;margin-top:12px;color:var(--primary);}
+.plan-price span{font-size:20px;color:var(--muted);font-family:'Jost',sans-serif;font-weight:300;}
+.plan-period{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:40px;
+}
+
+.plan-divider{width:100%;height:1px;background:var(--border-s);margin-bottom:36px;}
+
+.plan-desc{
+  font-size:15px;font-weight:300;color:var(--muted);
+  line-height:1.8;margin-bottom:36px;
+}
+
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:14px;flex:1;}
+.plan-features li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:14px;font-weight:300;color:var(--muted);line-height:1.5;
+}
+.plan-features li::before{
+  content:'';width:14px;height:14px;flex-shrink:0;margin-top:2px;
+  border:1px solid var(--primary);position:relative;
+}
+.plan-features li.included{color:var(--text);}
+.plan-features li.included::before{background:var(--primary);}
+.plan-features li.dimmed{color:var(--dim);}
+.plan-features li.dimmed::before{border-color:var(--dim);}
+
+.plan-cta{
+  margin-top:40px;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;
+  padding:16px;cursor:none;width:100%;
+  border:1px solid var(--border-s);background:none;color:var(--muted);
+  transition:all 0.3s;
+}
+.plan-cta:hover{border-color:var(--primary);color:var(--text);}
+.plan-card.featured .plan-cta{
+  background:var(--primary);border-color:var(--primary);color:#0A0A0A;
+  box-shadow:0 0 32px rgba(184,146,74,0.25);
+}
+.plan-card.featured .plan-cta:hover{
+  box-shadow:0 0 48px rgba(184,146,74,0.4);transform:translateY(-1px);
+}
+
+/* ── COMPARISON TABLE ── */
+.compare-section{
+  padding:0 80px 120px;
+}
+.compare-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,4vw,56px);font-weight:300;font-style:italic;
+  color:var(--text);margin-bottom:56px;letter-spacing:-0.02em;
+}
+.compare-title strong{font-style:normal;color:var(--primary);font-weight:300;}
+
+.compare-table{width:100%;border-collapse:collapse;}
+.compare-table th{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--muted);padding:0 0 20px 0;text-align:left;
+  border-bottom:1px solid var(--border-s);font-weight:400;
+}
+.compare-table th:not(:first-child){text-align:center;}
+.compare-table th.highlight{color:var(--primary);}
+
+.compare-table td{
+  padding:20px 0;border-bottom:1px solid var(--border-s);
+  vertical-align:middle;
+}
+.compare-table td:not(:first-child){text-align:center;}
+.compare-table tr:hover td{background:rgba(184,146,74,0.02);}
+
+.feat-name{font-size:14px;font-weight:300;color:var(--muted);padding-right:40px;}
+.feat-name strong{color:var(--text);font-weight:400;}
+.feat-category{
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:4px;
+}
+
+.check{color:var(--primary);font-size:14px;}
+.dash{color:var(--dim);font-size:18px;line-height:1;}
+.limit{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;
+  color:var(--muted);
+}
+.unlimited{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;
+  color:var(--primary);text-transform:uppercase;
+}
+
+/* ── FAQ ── */
+.faq-section{
+  padding:0 80px 160px;
+  border-top:1px solid var(--border-s);
+  margin-top:0;
+}
+.faq-header{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  padding-top:80px;margin-bottom:64px;align-items:end;
+}
+.faq-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(42px,5vw,68px);font-weight:300;
+  line-height:1;letter-spacing:-0.02em;color:var(--text);
+}
+.faq-title em{color:var(--primary);font-style:italic;}
+.faq-intro{font-size:16px;font-weight:300;color:var(--muted);line-height:1.85;}
+
+.faq-list{display:flex;flex-direction:column;}
+.faq-item{border-bottom:1px solid var(--border-s);}
+.faq-q{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:28px 0;background:none;border:none;cursor:none;
+  text-align:left;gap:40px;
+}
+.faq-q-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:300;color:var(--text);line-height:1.3;
+}
+.faq-icon{
+  width:28px;height:28px;border:1px solid var(--border-s);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--muted);font-size:16px;
+  transition:border-color 0.3s,transform 0.4s,color 0.3s;
+}
+.faq-item.open .faq-icon{border-color:var(--primary);color:var(--primary);transform:rotate(45deg);}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.faq-a-inner{
+  font-size:15px;font-weight:300;color:var(--muted);
+  line-height:1.9;padding-bottom:28px;max-width:640px;
+}
+.faq-a-inner strong{color:var(--text);font-weight:400;}
+.faq-item.open .faq-a{max-height:200px;}
+
+/* ── ENTERPRISE BANNER ── */
+.enterprise-banner{
+  margin:0 80px 160px;
+  background:var(--bg2);
+  border:1px solid var(--border-s);
+  padding:64px 80px;
+  display:grid;grid-template-columns:1fr auto;
+  gap:80px;align-items:center;
+  position:relative;overflow:hidden;
+}
+.enterprise-banner::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);
+  opacity:0.4;
+}
+.eb-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:var(--primary);margin-bottom:16px;}
+.eb-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:300;line-height:1.1;color:var(--text);letter-spacing:-0.02em;margin-bottom:16px;}
+.eb-title em{font-style:italic;color:var(--primary);}
+.eb-body{font-size:15px;font-weight:300;color:var(--muted);line-height:1.8;max-width:480px;}
+.eb-cta{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;
+  border:1px solid var(--border);background:none;color:var(--text);
+  padding:16px 36px;cursor:none;white-space:nowrap;
+  transition:background 0.3s,border-color 0.3s,color 0.3s,box-shadow 0.3s;
+}
+.eb-cta:hover{background:var(--primary);border-color:var(--primary);color:#0A0A0A;box-shadow:0 0 24px rgba(184,146,74,0.2);}
+
+/* ── FOOTER (minimal) ── */
+footer{background:var(--bg);border-top:1px solid var(--border-s);padding:0 80px;}
+.footer-brand-name{font-family:'Cormorant Garamond',serif;font-size:clamp(72px,12vw,180px);font-weight:300;line-height:0.88;letter-spacing:-0.03em;color:transparent;-webkit-text-stroke:1px rgba(184,146,74,0.15);user-select:none;display:block;padding-top:60px;}
+.footer-bottom{border-top:1px solid var(--border-s);padding:24px 0;display:flex;align-items:center;justify-content:space-between;margin-top:40px;}
+.footer-copy{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);}
+.footer-links{display:flex;gap:32px;}
+.footer-links a{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color 0.3s;}
+.footer-links a:hover{color:var(--primary);}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:0.1s;}.rd2{transition-delay:0.2s;}.rd3{transition-delay:0.3s;}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div id="grain"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="snapwise-lp-v2.html">
+    <div class="nav-mark"><span></span><span></span><span></span><span></span></div>
+    <span class="nav-wordmark">Snapwise</span>
+  </a>
+  <div class="nav-right">
+    <a class="nav-back" href="snapwise-lp-v2.html">Back to home</a>
+    <button id="nav-menu-btn">Menu</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-grid"></div>
+  <div class="ph-eyebrow">Pricing</div>
+  <h1 class="ph-headline">Simple enough to<br/><em>start now.</em></h1>
+  <p class="ph-sub">One tool. Three plans. All processing stays on your device — regardless of which you choose.</p>
+  <div class="billing-toggle">
+    <button class="toggle-opt active" id="btn-monthly">Monthly</button>
+    <button class="toggle-opt" id="btn-annual">Annual</button>
+    <span class="toggle-badge" id="annual-badge" style="display:none;">Save 30%</span>
+  </div>
+</div>
+
+<!-- PLANS -->
+<div class="plans-section">
+  <div class="plans-grid">
+
+    <!-- FREE -->
+    <div class="plan-card reveal">
+      <div class="plan-name">Free</div>
+      <div class="plan-price"><sup></sup>0<span></span></div>
+      <div class="plan-period">Forever free · No card required</div>
+      <div class="plan-divider"></div>
+      <p class="plan-desc">For casual explorers. Get a feel for what screenshot intelligence actually means.</p>
+      <ul class="plan-features">
+        <li class="included">200 screenshots / month</li>
+        <li class="included">OCR text extraction</li>
+        <li class="included">5 auto-categories</li>
+        <li class="included">Plain-language search</li>
+        <li class="included">30-day history</li>
+        <li class="dimmed">Custom categories</li>
+        <li class="dimmed">Export & integrations</li>
+        <li class="dimmed">Priority processing</li>
+        <li class="dimmed">API access</li>
+      </ul>
+      <button class="plan-cta">Start Free</button>
+    </div>
+
+    <!-- ARCHIVIST (featured) -->
+    <div class="plan-card featured reveal rd1">
+      <div class="plan-featured-badge">Most popular</div>
+      <div class="plan-name">Archivist</div>
+      <div class="plan-price"><sup>$</sup><span id="price-arch">12</span><span>/mo</span></div>
+      <div class="plan-period" id="period-arch">Billed monthly</div>
+      <div class="plan-divider"></div>
+      <p class="plan-desc">For the intentional curator. Every capture becomes a retrievable record with zero friction.</p>
+      <ul class="plan-features">
+        <li class="included">Unlimited screenshots</li>
+        <li class="included">Full OCR + AI parsing</li>
+        <li class="included">Unlimited categories</li>
+        <li class="included">Plain-language search</li>
+        <li class="included">Unlimited history</li>
+        <li class="included">Custom categories</li>
+        <li class="included">Export to Notion / Obsidian</li>
+        <li class="dimmed">Priority processing</li>
+        <li class="dimmed">API access</li>
+      </ul>
+      <button class="plan-cta">Start Archiving</button>
+    </div>
+
+    <!-- STUDIO -->
+    <div class="plan-card reveal rd2">
+      <div class="plan-name">Studio</div>
+      <div class="plan-price"><sup>$</sup><span id="price-studio">29</span><span>/mo</span></div>
+      <div class="plan-period" id="period-studio">Billed monthly</div>
+      <div class="plan-divider"></div>
+      <p class="plan-desc">For teams and power users who need intelligence at scale. API access included.</p>
+      <ul class="plan-features">
+        <li class="included">Everything in Archivist</li>
+        <li class="included">Priority processing</li>
+        <li class="included">API access</li>
+        <li class="included">Team workspace (5 seats)</li>
+        <li class="included">Advanced analytics</li>
+        <li class="included">Webhook integrations</li>
+        <li class="included">Custom AI categories</li>
+        <li class="included">Dedicated support</li>
+        <li class="included">SLA guarantee</li>
+      </ul>
+      <button class="plan-cta">Start Trial</button>
+    </div>
+
+  </div>
+
+  <!-- Trust line -->
+  <div style="display:flex;align-items:center;justify-content:center;gap:40px;padding:0 0 0;border-top:1px solid var(--border-s);padding-top:40px;" class="reveal">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--primary);box-shadow:0 0 6px var(--primary);display:block;"></span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">All processing on-device</span>
+    </div>
+    <div style="width:1px;height:16px;background:var(--border-s);"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--primary);box-shadow:0 0 6px var(--primary);display:block;"></span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">Cancel anytime</span>
+    </div>
+    <div style="width:1px;height:16px;background:var(--border-s);"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--primary);box-shadow:0 0 6px var(--primary);display:block;"></span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">14-day free trial on paid plans</span>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="compare-section">
+  <div class="compare-title reveal">Compare <strong>in detail.</strong></div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th style="width:40%;">Feature</th>
+        <th>Free</th>
+        <th class="highlight">Archivist</th>
+        <th>Studio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="feat-category">Capture</div><div class="feat-name"><strong>Monthly screenshots</strong></div></td>
+        <td><span class="limit">200</span></td>
+        <td><span class="unlimited">Unlimited</span></td>
+        <td><span class="unlimited">Unlimited</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">OCR text extraction</div></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">AI intent parsing</div></td>
+        <td><span class="limit">Basic</span></td>
+        <td><span class="unlimited">Full</span></td>
+        <td><span class="unlimited">Full + Custom</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-category">Organisation</div><div class="feat-name"><strong>Auto-categories</strong></div></td>
+        <td><span class="limit">5 fixed</span></td>
+        <td><span class="unlimited">Unlimited</span></td>
+        <td><span class="unlimited">Unlimited + AI Custom</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">Plain-language search</div></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">History retention</div></td>
+        <td><span class="limit">30 days</span></td>
+        <td><span class="unlimited">Unlimited</span></td>
+        <td><span class="unlimited">Unlimited</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-category">Export & Integrations</div><div class="feat-name"><strong>Export to Notion / Obsidian</strong></div></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">API access</div></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">Webhook integrations</div></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-category">Team & Support</div><div class="feat-name"><strong>Team seats</strong></div></td>
+        <td><span class="limit">1</span></td>
+        <td><span class="limit">1</span></td>
+        <td><span class="limit">5 included</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">Priority processing</div></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="feat-name">Dedicated support + SLA</div></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-header reveal">
+    <h2 class="faq-title">Questions worth<br/><em>asking.</em></h2>
+    <p class="faq-intro">Everything about how Snapwise works, what you're paying for, and what we never touch.</p>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q">
+        <span class="faq-q-text">Does Snapwise ever see my screenshots?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Never. All AI processing — OCR, intent parsing, categorisation — happens <strong>locally on your device</strong>. Your screenshots do not leave your hardware. We have no server that receives or stores your captures. This is a foundational design decision, not a checkbox.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        <span class="faq-q-text">What counts as a "screenshot" toward the free limit?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Any image Snapwise processes counts — native screenshots, imported images, or captures via the browser extension. The 200/month free limit resets on your billing date. <strong>Archivist and Studio have no limit whatsoever.</strong></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        <span class="faq-q-text">Can I change plans or cancel at any time?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Yes. No contracts, no lock-in. You can upgrade, downgrade, or cancel from your account settings at any moment. If you cancel a paid plan, <strong>you keep access until the end of your billing period</strong>, and your data stays on your device — we don't delete anything.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        <span class="faq-q-text">What is the annual discount exactly?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Choosing annual billing gives you <strong>30% off</strong> the monthly rate, paid upfront. Archivist drops to $8.40/mo (billed $100.80/yr). Studio drops to $20.30/mo (billed $243.60/yr).</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        <span class="faq-q-text">What is the Archivist plan — is it a different product?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Archivist is the name we give to the full Snapwise experience. The name reflects what the product does: it turns your screenshot habit into a <strong>personal, searchable archive</strong>. Same app, unlocked fully.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        <span class="faq-q-text">Do you offer student or nonprofit pricing?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Yes — reach out to hello@snapwise.ai with verification and we'll sort you out. We believe the people building and learning deserve this tool as much as anyone.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ENTERPRISE -->
+<div class="enterprise-banner reveal">
+  <div>
+    <div class="eb-label">Enterprise</div>
+    <h3 class="eb-title">Need something<br/><em>larger?</em></h3>
+    <p class="eb-body">Custom seat counts, SSO, advanced audit logging, dedicated infrastructure, and a direct line to the team. Built around your workflow, not ours.</p>
+  </div>
+  <button class="eb-cta">Talk to us</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand-name">Snapwise</span>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Snapwise · All rights reserved</span>
+    <div class="footer-links">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
+    </div>
+    <span class="footer-copy">On-device AI · Zero cloud</span>
+  </div>
+</footer>
+
+<script>
+// Cursor
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function t(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cur.style.left=mx+'px';cur.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(t);})();
+
+// Nav scroll
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40),{passive:true});
+
+// Reveal
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}}),{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+// Billing toggle
+const btnM=document.getElementById('btn-monthly');
+const btnA=document.getElementById('btn-annual');
+const badge=document.getElementById('annual-badge');
+const priceArch=document.getElementById('price-arch');
+const periodArch=document.getElementById('period-arch');
+const priceStudio=document.getElementById('price-studio');
+const periodStudio=document.getElementById('period-studio');
+
+btnM.addEventListener('click',()=>{
+  btnM.classList.add('active');btnA.classList.remove('active');
+  badge.style.display='none';
+  priceArch.textContent='12';periodArch.textContent='Billed monthly';
+  priceStudio.textContent='29';periodStudio.textContent='Billed monthly';
+});
+btnA.addEventListener('click',()=>{
+  btnA.classList.add('active');btnM.classList.remove('active');
+  badge.style.display='inline';
+  priceArch.textContent='8';periodArch.textContent='Billed $100.80 / year';
+  priceStudio.textContent='20';periodStudio.textContent='Billed $243.60 / year';
+});
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.closest('.faq-item');
+    const wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!wasOpen)item.classList.add('open');
+  });
+});
+
+document.querySelectorAll('input,button').forEach(el=>{if(el.tagName==='INPUT')el.style.cursor='text';});
+</script>
+</body>
+</html>
